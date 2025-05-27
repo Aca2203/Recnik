@@ -1,17 +1,21 @@
 package gui;
 import java.awt.Frame;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
+
+import imp.Recnik;
 
 @SuppressWarnings("serial")
 public class Forma extends Frame {
 
+	private Recnik recnik;
+	
 	public Forma() {
 		setBounds(700, 300, 700, 500);
 		setResizable(false);
 		setTitle("Речник");
 		
-		fillWindow();
+		popuniRecnik();
+		popuniProzor();
 		
 		this.addWindowListener(new WindowAdapter() {
 			@Override
@@ -23,7 +27,11 @@ public class Forma extends Frame {
 		setVisible(true);
 	}
 	
-	private void fillWindow() {
+	private void popuniRecnik() {
+		recnik = new Recnik(fajl);
+	}
+
+	private void popuniProzor() {
 		
 	}
 
