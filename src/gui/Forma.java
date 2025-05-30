@@ -1,6 +1,13 @@
 package gui;
 import java.awt.Frame;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
+
+import javax.swing.JOptionPane;
 
 import imp.Recnik;
 
@@ -28,7 +35,23 @@ public class Forma extends Frame {
 	}
 	
 	private void popuniRecnik() {
-		recnik = new Recnik(fajl);
+		try {
+			ucitajRecnik();
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(
+	                null,
+	                "Фајл не постоји!",
+	                "Грешка!",
+	                JOptionPane.ERROR_MESSAGE
+	        );
+			System.exit(1);
+		}
+		
+	}
+
+	private void ucitajRecnik() throws IOException {
+		List<String> linije = Files.readAllLines(Paths.get("recnik.txt"));
+		
 	}
 
 	private void popuniProzor() {
