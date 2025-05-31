@@ -1,18 +1,16 @@
 package gui;
-import java.awt.Frame;
+import java.awt.GridLayout;
 import java.awt.event.*;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.List;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import imp.Recnik;
 
 @SuppressWarnings("serial")
-public class Forma extends Frame {
+public class Forma extends JFrame {
 
 	private Recnik recnik;
 	
@@ -23,7 +21,6 @@ public class Forma extends Frame {
 		
 		popuniRecnik();
 		popuniProzor();
-		
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -51,11 +48,19 @@ public class Forma extends Frame {
 
 	private void ucitajRecnik() throws IOException {
 		List<String> linije = Files.readAllLines(Paths.get("recnik.txt"));
-		
+		recnik = new Recnik(linije);
 	}
 
 	private void popuniProzor() {
+		this.setLayout(new GridLayout());
+		JPanel panel1 = new JPanel();
+		JPanel panel2 = new JPanel(new GridLayout());
 		
+		JTable tabela = new JTable()
+		panel1.add();
+		
+		this.add(panel1);
+		this.add(panel2);
 	}
 
 	public static void main(String[] args) {

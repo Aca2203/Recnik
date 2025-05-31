@@ -1,6 +1,5 @@
 package imp;
-import java.io.File;
-import java.util.ArrayList;
+import java.util.*;
 
 class Element{
 	String rec;
@@ -16,8 +15,11 @@ public class Recnik {
 	// SC: O(n)
 	private ArrayList<Element> niz = new ArrayList<>();
 	
-	public Recnik(File fajl) {
-		
+	public Recnik(List<String> linije) {
+		for(String linija: linije) {
+			String[] recZnacenje = linija.split("#");
+			niz.add(new Element(recZnacenje[0], recZnacenje[1]));			
+		}		
 	}
 	
 	private int binarnaPretraga(String rec) {
