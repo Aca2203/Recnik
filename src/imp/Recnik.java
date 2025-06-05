@@ -1,19 +1,26 @@
 package imp;
 import java.util.*;
 
-class Element{
-	String rec;
-	String znacenje;
-	
-	Element(String rec, String znacenje){
-		this.rec = rec;
-		this.znacenje = znacenje;
-	}
-}
-
 public class Recnik {
 	// SC: O(n)
 	private ArrayList<Element> niz = new ArrayList<>();
+	private int iterator = 0;
+	
+	public void pocetak() {
+		iterator = 0;
+	}
+	
+	public void sledeci() {
+		iterator++;
+	}
+	
+	public boolean kraj() {
+		return iterator == niz.size();
+	}
+	
+	public Element dohvati() {
+		return niz.get(iterator);
+	}
 	
 	public Recnik(List<String> linije) {
 		for(String linija: linije) {
