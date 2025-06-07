@@ -29,6 +29,12 @@ public class Recnik {
 		}		
 	}
 	
+	public void ispisi() {
+		for(Element e: niz) {
+			System.out.println(e.rec + " " + e.znacenje);
+		}
+	}
+	
 	private int binarnaPretraga(String rec) {
 		int levi = 0, desni = niz.size() - 1;
 		while(levi <= desni) {
@@ -45,19 +51,19 @@ public class Recnik {
 	
 	// TC: O(n)
 	// SC: O(1)
-	public boolean ubaci(String rec, String znacenje) {
+	public int ubaci(String rec, String znacenje) {
 		int levi = 0, desni = niz.size() - 1;
 		while(levi <= desni) {
 			int sredina = levi + (desni - levi) / 2;
 			int cmp = niz.get(sredina).rec.compareTo(rec);
 			if(cmp == 0) {
-				return false;
+				return -1;
 			} else if(cmp > 0) desni = sredina - 1;
 			else levi = sredina + 1;			
 		}
 		
 		niz.add(levi, new Element(rec, znacenje));
-		return true;
+		return levi;
 	}
 	
 	// TC: O(logn)

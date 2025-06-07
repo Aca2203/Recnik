@@ -15,6 +15,12 @@ public class Forma extends JFrame {
 
 	private Recnik recnik;
 	private DefaultTableModel model;
+	private JButton dodajRec = new JButton("Додај реч");
+	private JButton izmeniRec = new JButton("Измени реч");
+	private JButton obrisiRec = new JButton("Обриши реч");
+	private JButton pretraziRec = new JButton("Претражи реч");
+	private JTextField poljeRec = new JTextField(20);
+	private JTextField poljeZnacenje = new JTextField(20);
 	
 	public Forma() {
 		setBounds(700, 300, 1000, 600);
@@ -22,6 +28,7 @@ public class Forma extends JFrame {
 		setTitle("Речник");
 		
 		popuniProzor();
+		dodajOsluskivace();
 		popuniRecnik();
 		this.addWindowListener(new WindowAdapter() {
 			@Override
@@ -31,8 +38,8 @@ public class Forma extends JFrame {
 		});
 		
 		setVisible(true);
-	}
-	
+	}	
+
 	private void popuniRecnik() {
 		try {
 			ucitajRecnik();
@@ -73,23 +80,35 @@ public class Forma extends JFrame {
 		
 		JPanel recZnacenje = new JPanel(new GridLayout(2, 2));
 		recZnacenje.add(new JLabel("Реч:"));
-		recZnacenje.add(new JTextField(20));
+		recZnacenje.add(poljeRec);
 		recZnacenje.add(new JLabel("Значење:"));
-		recZnacenje.add(new JTextField(20));
+		recZnacenje.add(poljeZnacenje);
 		
 		panel2.add(recZnacenje);
 		
-		JPanel dugmici = new JPanel(new GridLayout(1, 3));
-		dugmici.add(new JButton("Додај реч"));
-		dugmici.add(new JButton("Измени реч"));
-		dugmici.add(new JButton("Обриши реч"));
+		JPanel dugmici = new JPanel(new GridLayout(1, 3));		
+		
+		dugmici.add(dodajRec);
+		dugmici.add(izmeniRec);
+		dugmici.add(obrisiRec);
 		
 		panel2.add(dugmici);
 		
-		panel2.add(new JButton("Претражи реч"));
+		panel2.add(pretraziRec);
 		
 		this.add(panel1);
 		this.add(panel2);
+	}
+	
+	private void dodajOsluskivace() {
+		dodajRec.addActionListener((ae) -> {
+			String rec = poljeRec.getText();
+			String znacenje = poljeZnacenje.getText();
+			if(rec.isBlank() || znacenje.isBlank()) return;
+			int indeks = recnik.ubaci(rec, znacenje);
+			model.insertRow(indeks, new Object[]{rec, znacenje});
+			recnik.ispisi();
+		});
 	}
 
 	public static void main(String[] args) {
