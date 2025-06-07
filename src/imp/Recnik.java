@@ -1,10 +1,16 @@
 package imp;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class Recnik {
 	// SC: O(n)
+	private String putanja;
 	private ArrayList<Element> niz = new ArrayList<>();
 	private int iterator = 0;
+	private boolean promenjen = false;
 	
 	public void pocetak() {
 		iterator = 0;
@@ -22,7 +28,9 @@ public class Recnik {
 		return niz.get(iterator);
 	}
 	
-	public Recnik(List<String> linije) {
+	public Recnik(String putanja) throws IOException {
+		this.putanja = putanja;
+		List<String> linije = Files.readAllLines(Paths.get(putanja));
 		for(String linija: linije) {
 			String[] recZnacenje = linija.split("#");
 			niz.add(new Element(recZnacenje[0], recZnacenje[1]));			
@@ -31,7 +39,7 @@ public class Recnik {
 	
 	public void ispisi() {
 		for(Element e: niz) {
-			System.out.println(e.rec + " " + e.znacenje);
+			System.out.println(e.rec + " - " + e.znacenje);
 		}
 	}
 	
@@ -63,28 +71,47 @@ public class Recnik {
 		}
 		
 		niz.add(levi, new Element(rec, znacenje));
+		promenjen = true;
 		return levi;
 	}
 	
 	// TC: O(logn)
 	// SC: O(1)
-	public boolean izmeni(String rec, String znacenje) {
+	public int izmeni(String rec, String znacenje) {
 		int indeks = binarnaPretraga(rec);
 		if(indeks != -1) {
-			niz.add(indeks, new Element(rec, znacenje));
-			return true;
+			niz.get(indeks).znacenje = znacenje;
+			promenjen = true;
+			return indeks;
 		}
-		else return false;
+		else return -1;
 	}
 	
 	// TC: O(n)
 	// SC: O(1)
-	public boolean obrisi(String rec) {
+	public int obrisi(String rec) {
 		int indeks = binarnaPretraga(rec);
 		if(indeks != -1) {
 			niz.remove(indeks);
-			return true;
+			promenjen = true;
+			return indeks;
 		}
-		else return false;
+		else return -1;
+	}
+	
+	public Element pretrazi(String rec) {
+		int indeks = binarnaPretraga(rec);
+		if(indeks == -1) return null;
+		else return niz.get(indeks);
+	}
+	
+	public void sacuvaj() throws IOException {
+		if(!promenjen) return;
+		Path p = Paths.get(putanja);
+		List<String> linije = new ArrayList<>();
+		for(Element e: niz) {
+			linije.add(e.rec + "#" + e.znacenje);
+		}
+		Files.write(p, linije);
 	}
 }
