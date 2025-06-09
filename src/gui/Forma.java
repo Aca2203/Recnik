@@ -2,8 +2,6 @@ package gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-import java.nio.file.*;
-import java.util.List;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -23,7 +21,7 @@ public class Forma extends JFrame {
 	private JButton obrisiRec = new JButton("Обриши реч");
 	private JButton pretraziRec = new JButton("Претражи реч");
 	private JTextField poljeRec = new JTextField(20);
-	private JTextField poljeZnacenje = new JTextField(20);
+	private JTextArea poljeZnacenje = new JTextArea(20, 5);
 	
 	public Forma() {
 		setBounds(700, 300, 1000, 600);
@@ -78,6 +76,8 @@ public class Forma extends JFrame {
 		recZnacenje.add(new JLabel("Реч:"));		
 		recZnacenje.add(poljeRec);
 		recZnacenje.add(new JLabel("Значење:"));
+		poljeZnacenje.setLineWrap(true);
+		poljeZnacenje.setWrapStyleWord(true);
 		recZnacenje.add(poljeZnacenje);
 		
 		panel2.add(recZnacenje);
@@ -182,7 +182,8 @@ public class Forma extends JFrame {
 		        );
 				return;
 			}
-			Element e = recnik.pretrazi(rec);
+			int[] indeks = new int[1];
+			Element e = recnik.pretrazi(rec, indeks);
 			if(e == null) {
 				JOptionPane.showMessageDialog(
 		                null,
@@ -193,6 +194,7 @@ public class Forma extends JFrame {
 				return;
 			}
 			poljeZnacenje.setText(e.znacenje);
+			tabela.setRowSelectionInterval(indeks[0], indeks[0]);
 		});
 		
 		tabela.addMouseListener(new MouseAdapter() {

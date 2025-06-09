@@ -99,10 +99,10 @@ public class Recnik {
 		else return -1;
 	}
 	
-	public Element pretrazi(String rec) {
-		int indeks = binarnaPretraga(rec);
-		if(indeks == -1) return null;
-		else return niz.get(indeks);
+	public Element pretrazi(String rec, int[] indeks) {
+		indeks[0] = binarnaPretraga(rec);
+		if(indeks[0] == -1) return null;
+		else return niz.get(indeks[0]);
 	}
 	
 	public void sacuvaj() throws IOException {
