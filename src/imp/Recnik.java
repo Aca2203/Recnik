@@ -5,12 +5,64 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-public class Recnik {
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+public class Recnik extends Thread {
 	// SC: O(n)
 	private String putanja;
 	private ArrayList<Element> niz = new ArrayList<>();
 	private int iterator = 0;
 	private boolean promenjen = false;
+	private JLabel labela;
+	private int vremeCuvanja;
+	private int sekunde = 0;
+	
+	public Recnik(String putanja, JLabel labela, int vremeCuvanja) throws IOException {
+		this.putanja = putanja;
+		this.labela = labela;
+		this.vremeCuvanja = vremeCuvanja;
+		List<String> linije = Files.readAllLines(Paths.get(putanja));
+		for(String linija: linije) {
+			String[] recZnacenje = linija.split("#");
+			niz.add(new Element(recZnacenje[0], recZnacenje[1]));			
+		}
+		this.start();
+	}
+	
+	@Override
+	public void run() {
+		try {
+			while(!isInterrupted()) {
+				synchronized (this) {
+					while(!promenjen) {
+						wait();
+					}
+				}
+				sleep(1000);
+				sekunde++;
+				
+				if(sekunde == vremeCuvanja) {
+					sacuvaj();
+					labela.setText("Успешно сачувано!");
+					labela.revalidate();
+					sekunde = 0;
+					promenjen = false;
+					sleep(2000);
+					labela.setText("");
+				}
+			}
+		} catch (InterruptedException e) {}
+		  catch (IOException e) {
+			  JOptionPane.showMessageDialog(
+	               	null,
+	                "Грешка при чувању речника у фајл!",
+	                "Грешка!",
+	                JOptionPane.ERROR_MESSAGE
+		       );
+			  System.exit(-1);
+		  }
+	}
 	
 	public void pocetak() {
 		iterator = 0;
@@ -26,18 +78,9 @@ public class Recnik {
 	
 	public Element dohvati() {
 		return niz.get(iterator);
-	}
+	}	
 	
-	public Recnik(String putanja) throws IOException {
-		this.putanja = putanja;
-		List<String> linije = Files.readAllLines(Paths.get(putanja));
-		for(String linija: linije) {
-			String[] recZnacenje = linija.split("#");
-			niz.add(new Element(recZnacenje[0], recZnacenje[1]));			
-		}		
-	}
-	
-	public void ispisi() {
+	public synchronized void ispisi() {
 		for(Element e: niz) {
 			System.out.println(e.rec + " - " + e.znacenje);
 		}
@@ -59,7 +102,7 @@ public class Recnik {
 	
 	// TC: O(n)
 	// SC: O(1)
-	public int ubaci(String rec, String znacenje) {
+	public synchronized int ubaci(String rec, String znacenje) {
 		int levi = 0, desni = niz.size() - 1;
 		while(levi <= desni) {
 			int sredina = levi + (desni - levi) / 2;
@@ -72,16 +115,18 @@ public class Recnik {
 		
 		niz.add(levi, new Element(rec, znacenje));
 		promenjen = true;
+		notify();
 		return levi;
 	}
 	
 	// TC: O(logn)
 	// SC: O(1)
-	public int izmeni(String rec, String znacenje) {
+	public synchronized int izmeni(String rec, String znacenje) {
 		int indeks = binarnaPretraga(rec);
 		if(indeks != -1) {
 			niz.get(indeks).znacenje = znacenje;
 			promenjen = true;
+			notify();
 			return indeks;
 		}
 		else return -1;
@@ -89,23 +134,24 @@ public class Recnik {
 	
 	// TC: O(n)
 	// SC: O(1)
-	public int obrisi(String rec) {
+	public synchronized int obrisi(String rec) {
 		int indeks = binarnaPretraga(rec);
 		if(indeks != -1) {
 			niz.remove(indeks);
 			promenjen = true;
+			notify();
 			return indeks;
 		}
 		else return -1;
 	}
 	
-	public Element pretrazi(String rec, int[] indeks) {
+	public synchronized Element pretrazi(String rec, int[] indeks) {
 		indeks[0] = binarnaPretraga(rec);
 		if(indeks[0] == -1) return null;
 		else return niz.get(indeks[0]);
 	}
 	
-	public void sacuvaj() throws IOException {
+	public synchronized void sacuvaj() throws IOException {
 		if(!promenjen) return;
 		Path p = Paths.get(putanja);
 		List<String> linije = new ArrayList<>();

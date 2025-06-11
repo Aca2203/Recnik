@@ -13,6 +13,7 @@ import imp.*;
 public class Forma extends JFrame {
 
 	private static final String PUTANJA = "recnik.txt";
+	private static final int VREME_CUVANJA = 20;
 	
 	private Recnik recnik;
 	private JTable tabela;
@@ -23,6 +24,7 @@ public class Forma extends JFrame {
 	private JButton pretraziRec = new JButton("Претражи реч");
 	private JTextField poljeRec = new JTextField(20);
 	private JTextArea poljeZnacenje = new JTextArea(20, 5);
+	private JLabel recnikSacuvan = new JLabel();
 	
 	public Forma() {
 		setBounds(700, 300, 1000, 600);
@@ -60,7 +62,7 @@ public class Forma extends JFrame {
 	}
 
 	private void ucitajRecnik() throws IOException {		
-		recnik = new Recnik(PUTANJA);
+		recnik = new Recnik(PUTANJA, recnikSacuvan, VREME_CUVANJA);
 	}
 
 	private void popuniProzor() {
@@ -73,6 +75,7 @@ public class Forma extends JFrame {
         tabela.getColumnModel().getColumn(1).setCellRenderer(new TextAreaRenderer());
         JScrollPane scrollPane = new JScrollPane(tabela);
         panel1.add(scrollPane);
+        panel1.add(recnikSacuvan, BorderLayout.SOUTH);
         
 		JPanel recZnacenje = new JPanel(new GridLayout(2, 2));
 		recZnacenje.add(new JLabel("Реч:"));		
@@ -216,12 +219,14 @@ public class Forma extends JFrame {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
+				recnik.interrupt();
 				try {
 					recnik.sacuvaj();
-				} catch (IOException e1) {
+					recnik.join();
+				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(
 			                null,
-			                "Грешка при чувању фајла!",
+			                "Грешка!",
 			                "Грешка!",
 			                JOptionPane.ERROR_MESSAGE
 			        );
