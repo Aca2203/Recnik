@@ -72,6 +72,14 @@ public class Forma extends JFrame {
 		
 		model = new DefaultTableModel(new Object[]{"Реч", "Значење"}, 0);
         tabela = new JTable(model);
+        tabela.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = tabela.getSelectedRow();
+                if (selectedRow != -1) {
+                	tabela.scrollRectToVisible(tabela.getCellRect(selectedRow, 0, true));
+                }
+            }
+        });
         tabela.getColumnModel().getColumn(1).setCellRenderer(new TextAreaRenderer());
         JScrollPane scrollPane = new JScrollPane(tabela);
         panel1.add(scrollPane);
@@ -124,7 +132,8 @@ public class Forma extends JFrame {
 		        );
 				return;
 			}
-			model.insertRow(indeks, new Object[]{rec, znacenje});			
+			model.insertRow(indeks, new Object[]{rec, znacenje});
+			tabela.setRowSelectionInterval(indeks, indeks);
 		});
 		
 		izmeniRec.addActionListener((ae) -> {
@@ -174,6 +183,11 @@ public class Forma extends JFrame {
 				return;
 			}
 			model.removeRow(indeks);
+			if(tabela.getRowCount() > 0) {
+				tabela.setRowSelectionInterval(Math.min(indeks, tabela.getRowCount() - 1), Math.min(indeks, tabela.getRowCount() - 1));
+				poljeRec.setText((String) tabela.getValueAt(tabela.getSelectedRow(), 0));
+				poljeZnacenje.setText((String) tabela.getValueAt(tabela.getSelectedRow(), 1));
+			}			
 		});
 		
 		pretraziRec.addActionListener((ae) -> {
@@ -233,6 +247,15 @@ public class Forma extends JFrame {
 				}
 				dispose();
 			}
+		});
+		
+		poljeZnacenje.addKeyListener(new KeyAdapter() {
+		    @Override
+		    public void keyPressed(KeyEvent e) {
+		        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+		        	dodajRec.doClick();
+		        }
+		    }
 		});
 	}
 
