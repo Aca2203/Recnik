@@ -4,6 +4,7 @@ import java.awt.event.*;
 import java.io.IOException;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
@@ -25,6 +26,8 @@ public class Forma extends JFrame {
 	private JTextField poljeRec = new JTextField(20);
 	private JTextArea poljeZnacenje = new JTextArea(20, 5);
 	private JLabel recnikSacuvan = new JLabel();
+	
+	private boolean programiranoAzuriranje = false;
 	
 	public Forma() {
 		setBounds(700, 300, 1000, 600);
@@ -70,8 +73,14 @@ public class Forma extends JFrame {
 		JPanel panel1 = new JPanel();
 		JPanel panel2 = new JPanel(new GridLayout(0, 1));
 		
-		model = new DefaultTableModel(new Object[]{"Реч", "Значење"}, 0);
+		model = new DefaultTableModel(new Object[]{"Реч", "Значење"}, 0) {
+			@Override
+		    public boolean isCellEditable(int row, int column) {
+		        return column == 1;
+		    }
+		};
         tabela = new JTable(model);
+        
         tabela.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 int selectedRow = tabela.getSelectedRow();
@@ -110,6 +119,17 @@ public class Forma extends JFrame {
 	}
 	
 	private void dodajOsluskivace() {
+		model.addTableModelListener(e -> {
+			if(programiranoAzuriranje) return;
+			
+		    if (e.getType() == TableModelEvent.UPDATE) {
+		        int red = e.getFirstRow();
+		        String rec = (String) model.getValueAt(red, 0);
+		        String znacenje = (String) model.getValueAt(red, 1);
+		        recnik.izmeni(rec, znacenje);
+		    }
+		});
+		
 		dodajRec.addActionListener((ae) -> {
 			String rec = poljeRec.getText().strip();
 			String znacenje = poljeZnacenje.getText().strip();
@@ -158,7 +178,9 @@ public class Forma extends JFrame {
 		        );
 				return;
 			}
+			programiranoAzuriranje = true;
 			model.setValueAt(znacenje, indeks, 1);
+			programiranoAzuriranje = false;
 		});
 		
 		obrisiRec.addActionListener((ae) -> {
