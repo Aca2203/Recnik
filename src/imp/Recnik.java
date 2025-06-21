@@ -125,7 +125,7 @@ public class Recnik extends Thread {
 		int indeks = binarnaPretraga(rec);
 		if(indeks != -1) {
 			Element e = niz.get(indeks);
-			e.vrsta = vrsta;
+			if(vrsta != -1) e.vrsta = vrsta;
 			e.znacenje = znacenje;
 			promenjen = true;
 			notify();

@@ -5,8 +5,7 @@ import java.io.IOException;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
+import javax.swing.table.*;
 
 import imp.*;
 
@@ -65,7 +64,7 @@ public class Forma extends JFrame {
 	private void popuniTabelu() {
 		for(recnik.pocetak(); !recnik.kraj(); recnik.sledeci()) {
 			Element el = recnik.dohvati();
-			String vrsta = izvuciVrstu(el.vrsta);
+			String vrsta = vrstaUTekst(el.vrsta);
 			model.addRow(new Object[]{el.rec, vrsta, el.znacenje});
 		}
 	}	
@@ -82,7 +81,7 @@ public class Forma extends JFrame {
 		model = new DefaultTableModel(new Object[]{"Реч", "Врста", "Значење"}, 0) {
 			@Override
 		    public boolean isCellEditable(int row, int column) {
-		        return column == 1;
+		        return column == 2;
 		    }
 		};
         tabela = new JTable(model);
@@ -169,9 +168,9 @@ public class Forma extends JFrame {
 		    if (e.getType() == TableModelEvent.UPDATE) {
 		        int red = e.getFirstRow();
 		        String rec = (String) model.getValueAt(red, 0);
-		        String vrsta = (String) model.getValueAt(red, 1);
 		        String znacenje = (String) model.getValueAt(red, 2);
-		        //recnik.izmeni(rec, vrsta, znacenje);
+		        recnik.izmeni(rec, -1, znacenje);
+		        poljeZnacenje.setText(znacenje);
 		    }
 		});
 		
@@ -208,7 +207,7 @@ public class Forma extends JFrame {
 		        );
 				return;
 			}
-			String vrstaTekst = izvuciVrstu(vrsta);
+			String vrstaTekst = vrstaUTekst(vrsta);
 			model.insertRow(indeks, new Object[]{rec, vrstaTekst, znacenje});
 			tabela.setRowSelectionInterval(indeks, indeks);
 		});
@@ -247,7 +246,7 @@ public class Forma extends JFrame {
 				return;
 			}
 			
-			String vrstaTekst = izvuciVrstu(vrsta);
+			String vrstaTekst = vrstaUTekst(vrsta);
 			programiranoAzuriranje = true;
 			model.setValueAt(vrstaTekst, indeks, 1);
 			model.setValueAt(znacenje, indeks, 2);
@@ -307,7 +306,7 @@ public class Forma extends JFrame {
 				return;
 			}
 			poljeZnacenje.setText(e.znacenje);
-			postaviRadioDugmice(izvuciVrstu(e.vrsta));
+			postaviRadioDugmice(vrstaUTekst(e.vrsta));
 			tabela.setRowSelectionInterval(indeks[0], indeks[0]);
 		});
 		
@@ -385,7 +384,7 @@ public class Forma extends JFrame {
 		}
 	}
 	
-	private String izvuciVrstu(int v) {
+	private String vrstaUTekst(int v) {
 		String vrsta = "";
 		switch (v) {
 			case 0: {
