@@ -25,7 +25,7 @@ public class Recnik extends Thread {
 		List<String> linije = Files.readAllLines(Paths.get(putanja));
 		for(String linija: linije) {
 			String[] recZnacenje = linija.split("#");
-			niz.add(new Element(recZnacenje[0], recZnacenje[1]));			
+			niz.add(new Element(recZnacenje[0], Integer.parseInt(recZnacenje[1]), recZnacenje[2]));			
 		}
 		this.start();
 	}
@@ -102,7 +102,7 @@ public class Recnik extends Thread {
 	
 	// TC: O(n)
 	// SC: O(1)
-	public synchronized int ubaci(String rec, String znacenje) {
+	public synchronized int ubaci(String rec, int vrsta, String znacenje) {
 		int levi = 0, desni = niz.size() - 1;
 		while(levi <= desni) {
 			int sredina = levi + (desni - levi) / 2;
@@ -113,7 +113,7 @@ public class Recnik extends Thread {
 			else levi = sredina + 1;			
 		}
 		
-		niz.add(levi, new Element(rec, znacenje));
+		niz.add(levi, new Element(rec, vrsta, znacenje));
 		promenjen = true;
 		notify();
 		return levi;
@@ -121,10 +121,12 @@ public class Recnik extends Thread {
 	
 	// TC: O(logn)
 	// SC: O(1)
-	public synchronized int izmeni(String rec, String znacenje) {
+	public synchronized int izmeni(String rec, int vrsta, String znacenje) {
 		int indeks = binarnaPretraga(rec);
 		if(indeks != -1) {
-			niz.get(indeks).znacenje = znacenje;
+			Element e = niz.get(indeks);
+			e.vrsta = vrsta;
+			e.znacenje = znacenje;
 			promenjen = true;
 			notify();
 			return indeks;
@@ -156,7 +158,7 @@ public class Recnik extends Thread {
 		Path p = Paths.get(putanja);
 		List<String> linije = new ArrayList<>();
 		for(Element e: niz) {
-			linije.add(e.rec + "#" + e.znacenje);
+			linije.add(e.rec + "#" + e.vrsta + "#" + e.znacenje);
 		}
 		Files.write(p, linije);
 	}

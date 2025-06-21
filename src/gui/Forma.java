@@ -27,6 +27,11 @@ public class Forma extends JFrame {
 	private JTextArea poljeZnacenje = new JTextArea(20, 5);
 	private JLabel recnikSacuvan = new JLabel();
 	
+	JRadioButton imenica = new JRadioButton("Именица");
+	JRadioButton glagol = new JRadioButton("Глагол");
+	JRadioButton pridev = new JRadioButton("Придев");
+	ButtonGroup grupa = new ButtonGroup();
+	
 	private boolean programiranoAzuriranje = false;
 	
 	public Forma() {
@@ -60,9 +65,10 @@ public class Forma extends JFrame {
 	private void popuniTabelu() {
 		for(recnik.pocetak(); !recnik.kraj(); recnik.sledeci()) {
 			Element el = recnik.dohvati();
-			model.addRow(new Object[]{el.rec, el.znacenje});
+			String vrsta = izvuciVrstu(el.vrsta);
+			model.addRow(new Object[]{el.rec, vrsta, el.znacenje});
 		}
-	}
+	}	
 
 	private void ucitajRecnik() throws IOException {		
 		recnik = new Recnik(PUTANJA, recnikSacuvan, VREME_CUVANJA);
@@ -73,7 +79,7 @@ public class Forma extends JFrame {
 		JPanel panel1 = new JPanel();
 		JPanel panel2 = new JPanel(new GridLayout(0, 1));
 		
-		model = new DefaultTableModel(new Object[]{"Реч", "Значење"}, 0) {
+		model = new DefaultTableModel(new Object[]{"Реч", "Врста", "Значење"}, 0) {
 			@Override
 		    public boolean isCellEditable(int row, int column) {
 		        return column == 1;
@@ -103,6 +109,44 @@ public class Forma extends JFrame {
 		recZnacenje.add(poljeZnacenje);
 		
 		panel2.add(recZnacenje);
+				
+		grupa.add(imenica);
+		grupa.add(glagol);
+		grupa.add(pridev);
+		
+		JPanel okruzujuciPanelImenica = new JPanel();
+		okruzujuciPanelImenica.setLayout(new BoxLayout(okruzujuciPanelImenica, BoxLayout.Y_AXIS));
+		okruzujuciPanelImenica.add(Box.createVerticalGlue());
+
+		JPanel panelImenica = new JPanel();
+		panelImenica.add(imenica);
+		okruzujuciPanelImenica.add(panelImenica);
+
+		okruzujuciPanelImenica.add(Box.createVerticalGlue());
+		
+		JPanel okruzujuciPanelGlagol = new JPanel();
+		okruzujuciPanelGlagol.setLayout(new BoxLayout(okruzujuciPanelGlagol, BoxLayout.Y_AXIS));
+		okruzujuciPanelGlagol.add(Box.createVerticalGlue());
+
+		JPanel panelGlagol = new JPanel();
+		panelGlagol.add(glagol);
+		okruzujuciPanelGlagol.add(panelGlagol);
+
+		okruzujuciPanelGlagol.add(Box.createVerticalGlue());
+
+		JPanel okruzujuciPanelPridev = new JPanel();
+		okruzujuciPanelPridev.setLayout(new BoxLayout(okruzujuciPanelPridev, BoxLayout.Y_AXIS));
+		okruzujuciPanelPridev.add(Box.createVerticalGlue());
+
+		JPanel panelPridev = new JPanel();
+		panelPridev.add(pridev);
+		okruzujuciPanelPridev.add(panelPridev);
+
+		okruzujuciPanelPridev.add(Box.createVerticalGlue());
+
+		panel2.add(okruzujuciPanelImenica);
+		panel2.add(okruzujuciPanelGlagol);
+		panel2.add(okruzujuciPanelPridev);
 		
 		JPanel dugmici = new JPanel(new GridLayout(1, 3));		
 		
@@ -125,8 +169,9 @@ public class Forma extends JFrame {
 		    if (e.getType() == TableModelEvent.UPDATE) {
 		        int red = e.getFirstRow();
 		        String rec = (String) model.getValueAt(red, 0);
-		        String znacenje = (String) model.getValueAt(red, 1);
-		        recnik.izmeni(rec, znacenje);
+		        String vrsta = (String) model.getValueAt(red, 1);
+		        String znacenje = (String) model.getValueAt(red, 2);
+		        //recnik.izmeni(rec, vrsta, znacenje);
 		    }
 		});
 		
@@ -142,7 +187,18 @@ public class Forma extends JFrame {
 		        );
 				return;
 			}
-			int indeks = recnik.ubaci(rec, znacenje);
+			if(!imenica.isSelected() && !glagol.isSelected() && !pridev.isSelected()) {
+				JOptionPane.showMessageDialog(
+		                null,
+		                "Изаберите врсту речи!",
+		                "Грешка!",
+		                JOptionPane.ERROR_MESSAGE
+		        );
+				return;
+			}
+			int vrsta = vrstaIzRadioDugmica();
+			
+			int indeks = recnik.ubaci(rec, vrsta, znacenje);
 			if(indeks == -1) {
 				JOptionPane.showMessageDialog(
 		                null,
@@ -152,7 +208,8 @@ public class Forma extends JFrame {
 		        );
 				return;
 			}
-			model.insertRow(indeks, new Object[]{rec, znacenje});
+			String vrstaTekst = izvuciVrstu(vrsta);
+			model.insertRow(indeks, new Object[]{rec, vrstaTekst, znacenje});
 			tabela.setRowSelectionInterval(indeks, indeks);
 		});
 		
@@ -168,7 +225,18 @@ public class Forma extends JFrame {
 		        );
 				return;
 			}
-			int indeks = recnik.izmeni(rec, znacenje);
+			if(!imenica.isSelected() && !glagol.isSelected() && !pridev.isSelected()) {
+				JOptionPane.showMessageDialog(
+		                null,
+		                "Изаберите врсту речи!",
+		                "Грешка!",
+		                JOptionPane.ERROR_MESSAGE
+		        );
+				return;
+			}
+			int vrsta = vrstaIzRadioDugmica();
+			
+			int indeks = recnik.izmeni(rec, vrsta, znacenje);
 			if(indeks == -1) {
 				JOptionPane.showMessageDialog(
 		                null,
@@ -178,8 +246,11 @@ public class Forma extends JFrame {
 		        );
 				return;
 			}
+			
+			String vrstaTekst = izvuciVrstu(vrsta);
 			programiranoAzuriranje = true;
-			model.setValueAt(znacenje, indeks, 1);
+			model.setValueAt(vrstaTekst, indeks, 1);
+			model.setValueAt(znacenje, indeks, 2);
 			programiranoAzuriranje = false;
 		});
 		
@@ -208,7 +279,8 @@ public class Forma extends JFrame {
 			if(tabela.getRowCount() > 0) {
 				tabela.setRowSelectionInterval(Math.min(indeks, tabela.getRowCount() - 1), Math.min(indeks, tabela.getRowCount() - 1));
 				poljeRec.setText((String) tabela.getValueAt(tabela.getSelectedRow(), 0));
-				poljeZnacenje.setText((String) tabela.getValueAt(tabela.getSelectedRow(), 1));
+				postaviRadioDugmice((String) tabela.getValueAt(tabela.getSelectedRow(), 1));
+				poljeZnacenje.setText((String) tabela.getValueAt(tabela.getSelectedRow(), 2));
 			}			
 		});
 		
@@ -235,6 +307,7 @@ public class Forma extends JFrame {
 				return;
 			}
 			poljeZnacenje.setText(e.znacenje);
+			postaviRadioDugmice(izvuciVrstu(e.vrsta));
 			tabela.setRowSelectionInterval(indeks[0], indeks[0]);
 		});
 		
@@ -245,11 +318,14 @@ public class Forma extends JFrame {
 		        
 		        if (row >= 0) {
 		            String rec = (String) tabela.getValueAt(row, 0);
-		            String znacenje = (String) tabela.getValueAt(row, 1);
+		            String vrsta = (String) tabela.getValueAt(row, 1);		            
+		            String znacenje = (String) tabela.getValueAt(row, 2);
 		            poljeRec.setText(rec);
 		            poljeZnacenje.setText(znacenje);
+		            
+		            postaviRadioDugmice(vrsta);
 		        }
-		    }
+			}
 		});
 		
 		this.addWindowListener(new WindowAdapter() {
@@ -279,6 +355,58 @@ public class Forma extends JFrame {
 		        }
 		    }
 		});
+	}
+
+	private int vrstaIzRadioDugmica() {
+		int vrsta = 0;
+		if(imenica.isSelected()) vrsta = 0;
+		if(glagol.isSelected()) vrsta = 1;
+		if(pridev.isSelected()) vrsta = 2;
+		return vrsta;
+	}
+	
+	private void postaviRadioDugmice(String vrsta) {
+		switch (vrsta) {
+			case "Именица": {
+				imenica.setSelected(true);
+				break;
+			}
+			case "Глагол": {
+				glagol.setSelected(true);
+				break;
+			}
+			case "Придев": {
+				pridev.setSelected(true);
+				break;
+			}
+			default: {
+				break;
+			}
+		}
+	}
+	
+	private String izvuciVrstu(int v) {
+		String vrsta = "";
+		switch (v) {
+			case 0: {
+				vrsta = "Именица";
+				break;
+			}
+				
+			case 1: {
+				vrsta = "Глагол";
+				break;
+			}
+				
+			case 2: {
+				vrsta = "Придев";
+				break;
+			}
+			default: {
+				break;
+			}
+		}
+		return vrsta;
 	}
 
 	public static void main(String[] args) {
