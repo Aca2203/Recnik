@@ -4,6 +4,7 @@ import java.awt.event.*;
 import java.io.IOException;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.*;
 
@@ -94,7 +95,7 @@ public class Forma extends JFrame {
                 }
             }
         });
-        tabela.getColumnModel().getColumn(1).setCellRenderer(new TextAreaRenderer());
+        tabela.getColumnModel().getColumn(2).setCellRenderer(new TextAreaRenderer());
         JScrollPane scrollPane = new JScrollPane(tabela);
         panel1.add(scrollPane);
         panel1.add(recnikSacuvan, BorderLayout.SOUTH);
@@ -195,7 +196,7 @@ public class Forma extends JFrame {
 		        );
 				return;
 			}
-			int vrsta = vrstaIzRadioDugmica();
+			int vrsta = dohvatiVrstuIzRadioDugmica();
 			
 			int indeks = recnik.ubaci(rec, vrsta, znacenje);
 			if(indeks == -1) {
@@ -233,7 +234,7 @@ public class Forma extends JFrame {
 		        );
 				return;
 			}
-			int vrsta = vrstaIzRadioDugmica();
+			int vrsta = dohvatiVrstuIzRadioDugmica();
 			
 			int indeks = recnik.izmeni(rec, vrsta, znacenje);
 			if(indeks == -1) {
@@ -356,7 +357,7 @@ public class Forma extends JFrame {
 		});
 	}
 
-	private int vrstaIzRadioDugmica() {
+	private int dohvatiVrstuIzRadioDugmica() {
 		int vrsta = 0;
 		if(imenica.isSelected()) vrsta = 0;
 		if(glagol.isSelected()) vrsta = 1;
@@ -412,8 +413,16 @@ public class Forma extends JFrame {
 		new Forma();
 	}
 
-	static class TextAreaRenderer extends JTextArea implements TableCellRenderer {
-        public TextAreaRenderer() {
+	static class TextAreaRenderer extends JTextArea implements TableCellRenderer {		
+		private Border focusBorder = UIManager.getBorder("Table.focusCellHighlightBorder");
+		private Border noFocusBorder = BorderFactory.createEmptyBorder(
+		    focusBorder.getBorderInsets(null).top,
+		    focusBorder.getBorderInsets(null).left,
+		    focusBorder.getBorderInsets(null).bottom,
+		    focusBorder.getBorderInsets(null).right
+		);
+		
+		public TextAreaRenderer() {
             setLineWrap(true);
             setWrapStyleWord(true);
             setOpaque(true);
@@ -432,6 +441,11 @@ public class Forma extends JFrame {
             } else {
                 setBackground(table.getBackground());
                 setForeground(table.getForeground());
+            }
+            if (hasFocus) {
+                setBorder(focusBorder);
+            } else {
+                setBorder(noFocusBorder);
             }
             return this;
         }
