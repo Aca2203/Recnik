@@ -26,6 +26,8 @@ public class Forma extends JFrame {
 	private JTextField poljeRec = new JTextField(20);
 	private JTextArea poljeZnacenje = new JTextArea(20, 5);
 	private JLabel recnikSacuvan = new JLabel();
+	private JMenuItem igricav1 = new JMenuItem("Понуђени одговори");
+	private JMenuItem igricav2 = new JMenuItem("Сам укуцај реч");
 	
 	JRadioButton imenica = new JRadioButton("Именица");
 	JRadioButton glagol = new JRadioButton("Глагол");
@@ -44,38 +46,18 @@ public class Forma extends JFrame {
 		popuniRecnik();		
 		
 		setVisible(true);
-	}	
-
-	private void popuniRecnik() {
-		try {
-			ucitajRecnik();
-			popuniTabelu();
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(
-	                null,
-	                "Фајл не постоји!",
-	                "Грешка!",
-	                JOptionPane.ERROR_MESSAGE
-	        );
-			System.exit(1);
-		}
-		
 	}
-
-	private void popuniTabelu() {
-		for(recnik.pocetak(); !recnik.kraj(); recnik.sledeci()) {
-			Element el = recnik.dohvati();
-			String vrsta = vrstaUTekst(el.vrsta);
-			model.addRow(new Object[]{el.rec, vrsta, el.znacenje});
-		}
-	}	
-
-	private void ucitajRecnik() throws IOException {		
-		recnik = new Recnik(PUTANJA, recnikSacuvan, VREME_CUVANJA);
-	}
-
+	
 	private void popuniProzor() {
 		this.setLayout(new GridLayout());
+		
+		JMenuBar traka = new JMenuBar();
+		JMenu meniIgrice = new JMenu("Игрице");
+		meniIgrice.add(igricav1);
+		meniIgrice.add(igricav2);
+		traka.add(meniIgrice);
+		this.setJMenuBar(traka);
+		
 		JPanel panel1 = new JPanel();
 		JPanel panel2 = new JPanel(new GridLayout(0, 1));
 		
@@ -161,7 +143,7 @@ public class Forma extends JFrame {
 		this.add(panel1);
 		this.add(panel2);
 	}
-	
+
 	private void dodajOsluskivace() {
 		model.addTableModelListener(e -> {
 			if(programiranoAzuriranje) return;
@@ -355,7 +337,44 @@ public class Forma extends JFrame {
 		        }
 		    }
 		});
+		
+		igricav1.addActionListener((ae) -> {
+			this.setVisible(false);
+			new IgricaV1(this);
+		});
+		
+		igricav2.addActionListener((ae) -> {
+			
+		});
 	}
+	
+	private void popuniRecnik() {
+		try {
+			ucitajRecnik();
+			popuniTabelu();
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(
+	                null,
+	                "Фајл не постоји!",
+	                "Грешка!",
+	                JOptionPane.ERROR_MESSAGE
+	        );
+			System.exit(1);
+		}
+		
+	}
+
+	private void ucitajRecnik() throws IOException {		
+		recnik = new Recnik(PUTANJA, recnikSacuvan, VREME_CUVANJA);
+	}
+	
+	private void popuniTabelu() {
+		for(recnik.pocetak(); !recnik.kraj(); recnik.sledeci()) {
+			Element el = recnik.dohvati();
+			String vrsta = vrstaUTekst(el.vrsta);
+			model.addRow(new Object[]{el.rec, vrsta, el.znacenje});
+		}
+	}	
 
 	private int dohvatiVrstuIzRadioDugmica() {
 		int vrsta = 0;
