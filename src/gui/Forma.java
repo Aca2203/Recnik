@@ -29,10 +29,9 @@ public class Forma extends JFrame {
 	private JMenuItem igricav1 = new JMenuItem("Понуђени одговори");
 	private JMenuItem igricav2 = new JMenuItem("Сам укуцај реч");
 	
-	JRadioButton imenica = new JRadioButton("Именица");
-	JRadioButton glagol = new JRadioButton("Глагол");
-	JRadioButton pridev = new JRadioButton("Придев");
-	ButtonGroup grupa = new ButtonGroup();
+	private JRadioButton imenica = new JRadioButton("Именица");
+	private JRadioButton glagol = new JRadioButton("Глагол");
+	private JRadioButton pridev = new JRadioButton("Придев");
 	
 	private boolean programiranoAzuriranje = false;
 	
@@ -91,7 +90,8 @@ public class Forma extends JFrame {
 		recZnacenje.add(poljeZnacenje);
 		
 		panel2.add(recZnacenje);
-				
+		
+		ButtonGroup grupa = new ButtonGroup();
 		grupa.add(imenica);
 		grupa.add(glagol);
 		grupa.add(pridev);
