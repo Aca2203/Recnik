@@ -78,7 +78,15 @@ public class Recnik extends Thread {
 	
 	public Element dohvati() {
 		return niz.get(iterator);
-	}	
+	}
+	
+	public Element dohvati(int indeks) {
+		return niz.get(indeks);
+	}
+	
+	public int dohvatiVelicinu() {
+		return niz.size();
+	}
 	
 	public synchronized void ispisi() {
 		for(Element e: niz) {

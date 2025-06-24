@@ -16,7 +16,7 @@ public class Forma extends JFrame {
 	private static final String PUTANJA = "recnik.txt";
 	private static final int VREME_CUVANJA = 20;
 	
-	private Recnik recnik;
+	Recnik recnik;
 	private JTable tabela;
 	private DefaultTableModel model;
 	private JButton dodajRec = new JButton("Додај реч");
