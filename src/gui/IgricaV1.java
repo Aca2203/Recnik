@@ -99,7 +99,7 @@ public class IgricaV1 extends JFrame {
 			}
 			
 			JDialog dialog = new JDialog(this, "", true);
-			dialog.add(new Label(poruka, Label.CENTER));
+			dialog.add(new JLabel(poruka, JLabel.CENTER));
 			dialog.setBounds(this.getX() + this.getWidth() / 2 - 200, this.getY() + this.getHeight() / 2 - 100, 400, 200);
 			dialog.setVisible(true);
 			grupa.clearSelection();

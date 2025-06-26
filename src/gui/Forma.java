@@ -81,10 +81,10 @@ public class Forma extends JFrame {
         panel1.add(scrollPane);
         panel1.add(recnikSacuvan, BorderLayout.SOUTH);
         
-		JPanel recZnacenje = new JPanel(new GridLayout(2, 2));
-		recZnacenje.add(new JLabel("Реч:"));		
+		JPanel recZnacenje = new JPanel(new GridLayout(2, 2, 10, 0));
+		recZnacenje.add(new JLabel("Реч:", SwingConstants.RIGHT));		
 		recZnacenje.add(poljeRec);
-		recZnacenje.add(new JLabel("Значење:"));
+		recZnacenje.add(new JLabel("Значење:", SwingConstants.RIGHT));
 		poljeZnacenje.setLineWrap(true);
 		poljeZnacenje.setWrapStyleWord(true);
 		recZnacenje.add(poljeZnacenje);
@@ -344,7 +344,8 @@ public class Forma extends JFrame {
 		});
 		
 		igricav2.addActionListener((ae) -> {
-			
+			this.setVisible(false);
+			new IgricaV2(this);
 		});
 	}
 	
