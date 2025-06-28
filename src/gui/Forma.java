@@ -429,9 +429,9 @@ public class Forma extends JFrame {
 		return vrsta;
 	}
 
-	public static void main(String[] args) {
-		new Forma();
-	}
+//	public static void main(String[] args) {
+//		new Forma();
+//	}
 
 	static class TextAreaRenderer extends JTextArea implements TableCellRenderer {		
 		private Border focusBorder = UIManager.getBorder("Table.focusCellHighlightBorder");
