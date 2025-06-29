@@ -36,7 +36,8 @@ public class Forma extends JFrame {
 	private boolean programiranoAzuriranje = false;
 	
 	public Forma() {
-		setBounds(700, 300, 1000, 600);
+		setSize(1000, 600);
+		setLocationRelativeTo(null);
 		setResizable(false);
 		setTitle("Речник");
 		

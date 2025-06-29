@@ -21,7 +21,8 @@ public class IgricaV2 extends JFrame {
 		this.roditelj = roditelj;
 		this.recnik = roditelj.recnik;
 		
-		setBounds(700, 300, 500, 300);
+		setSize(500, 300);
+		setLocationRelativeTo(null);
 		setResizable(false);
 		setTitle("Игрица верзија 2");
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
