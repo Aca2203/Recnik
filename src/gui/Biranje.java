@@ -25,17 +25,13 @@ public class Biranje extends JFrame {
 	}	
 
 	private void popuniProzor() {
-		setLayout(new GridLayout());		
 		
 		JPanel content = new JPanel(new GridLayout(1, 2, 10, 0));
 		content.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		content.add(dugmeV1);
 		content.add(dugmeV2);
 
-		setContentPane(content);		
-		
-		add(dugmeV1);
-		add(dugmeV2);
+		setContentPane(content);
 	}
 	
 	private void dodajOsluskivace() {

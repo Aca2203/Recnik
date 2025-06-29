@@ -1,12 +1,24 @@
 package gui;
 
 import java.awt.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 import javax.swing.*;
+import javax.swing.event.*;
+
+import imp.PrefiksnoStablo;
 
 @SuppressWarnings("serial")
 public class FormaV2 extends JFrame {
-	private JComboBox<String> poljeRec = new JComboBox<>();
+	private static final String PUTANJA = "recnik.txt";
+	private static final int VREME_CUVANJA = 20;
+	
+	private PrefiksnoStablo prefiksnoStablo = new PrefiksnoStablo();
+	private JComboBox<String> cmbRec = new JComboBox<>();
+	private JTextField poljeRec = (JTextField) cmbRec.getEditor().getEditorComponent();
 	private JTextArea poljeZnacenje = new JTextArea(5, 25);
 	private ButtonGroup grupa = new ButtonGroup();
 	
@@ -36,7 +48,8 @@ public class FormaV2 extends JFrame {
 		JPanel panel = new JPanel(new GridBagLayout());
 		panel.setMaximumSize(new Dimension(400, 200));
 		
-		poljeRec.setPreferredSize(new Dimension(250, 20));
+		cmbRec.setEditable(true);
+		cmbRec.setPreferredSize(new Dimension(250, 20));
 		poljeZnacenje.setPreferredSize(new Dimension(200, 20));
 		
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -49,7 +62,7 @@ public class FormaV2 extends JFrame {
 		gbc.gridx = 1;
 		gbc.gridy = 0;
 		
-		panel.add(poljeRec, gbc);
+		panel.add(cmbRec, gbc);
 		
 		gbc.gridx = 0;
 		gbc.gridy = 1;
@@ -109,14 +122,52 @@ public class FormaV2 extends JFrame {
 	}
 
 	private void dodajOsluskivace() {
-		
+		poljeRec.getDocument().addDocumentListener(new DocumentListener() {
+		    @Override
+		    public void insertUpdate(DocumentEvent e) {
+		        azuriraj();
+		    }		    
+
+			@Override
+		    public void removeUpdate(DocumentEvent e) {
+		    	azuriraj();
+		    }
+
+		    @Override
+		    public void changedUpdate(DocumentEvent e) {}		    
+		});
 	}
 
 	private void popuniRecnik() {
-		
+		List<String> linije;
+		try {
+			linije = Files.readAllLines(Paths.get(PUTANJA));
+			for(String linija: linije) {
+				String[] recZnacenje = linija.split("#");
+				prefiksnoStablo.ubaci(recZnacenje[0], Integer.parseInt(recZnacenje[1]), recZnacenje[2]);
+			}
+			azuriraj();
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(
+	                null,
+	                "Фајл не постоји!",
+	                "Грешка!",
+	                JOptionPane.ERROR_MESSAGE
+	        );
+			System.exit(1);
+		}
 	}
 	
-//	public static void main(String[] args) {
-//		new FormaV2();
-//	}
+	private void azuriraj() {
+		String prefiks = poljeRec.getText();
+		//cmbRec.removeAllItems();
+		String[] reci = prefiksnoStablo.vratiReciSaPrefiksom(prefiks);
+		for(String rec: reci) {
+			cmbRec.addItem(rec);
+		}
+	}
+	
+	public static void main(String[] args) {
+		new FormaV2();
+	}
 }

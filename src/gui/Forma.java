@@ -43,7 +43,7 @@ public class Forma extends JFrame {
 		
 		popuniProzor();
 		dodajOsluskivace();
-		popuniRecnik();		
+		popuniRecnik();
 		
 		setVisible(true);
 	}
