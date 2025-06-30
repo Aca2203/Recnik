@@ -43,6 +43,13 @@ public class PrefiksnoStablo {
 		ArrayList<String> rezultat = new ArrayList<>();
 		
 		Cvor trenutni = koren;
+		if(prefiks == "") {
+			for(char karakter: trenutni.deca.keySet()) {
+				dfs(rezultat, "" + karakter, trenutni.deca.get(karakter));
+			}
+			return rezultat.toArray(new String[0]);
+		}
+				
 		for(char karakter: prefiks.toCharArray()) {
 			if(!trenutni.deca.containsKey(karakter)) {
 				return null;
@@ -51,6 +58,7 @@ public class PrefiksnoStablo {
 		}
 		
 		dfs(rezultat, prefiks, trenutni);
+		
 		
 		return rezultat.toArray(new String[0]);
 	}
