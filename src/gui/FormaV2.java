@@ -9,6 +9,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import imp.Element;
 import imp.PrefiksnoStablo;
 
 @SuppressWarnings("serial")
@@ -21,6 +22,9 @@ public class FormaV2 extends JFrame {
 	private JPopupMenu meni = new JPopupMenu();
 	private JTextArea poljeZnacenje = new JTextArea(5, 25);
 	private ButtonGroup grupa = new ButtonGroup();
+	private JRadioButton imenica = new JRadioButton("Именица");
+	private JRadioButton glagol = new JRadioButton("Глагол");
+	private JRadioButton pridev = new JRadioButton("Придев");
 	
 	private JButton dodajRec = new JButton("Додај реч");
 	private JButton izmeniRec = new JButton("Измени реч");
@@ -70,17 +74,15 @@ public class FormaV2 extends JFrame {
 		
 		gbc.gridx = 1;
 		gbc.gridy = 1;
+		poljeZnacenje.setLineWrap(true);
+		poljeZnacenje.setWrapStyleWord(true);
 		panel.add(poljeZnacenje, gbc);
 		
-		this.add(panel);
+		this.add(panel);		
 		
-		JRadioButton imenica = new JRadioButton("Именица");
-		JRadioButton glagol = new JRadioButton("Глагол");
-		JRadioButton pridev = new JRadioButton("Придев");
-		
-		imenica.setActionCommand("Именица");
-		glagol.setActionCommand("Глагол");
-		pridev.setActionCommand("Придев");
+		imenica.setActionCommand("0");
+		glagol.setActionCommand("1");
+		pridev.setActionCommand("2");
 		
 		grupa.add(imenica);
 		grupa.add(glagol);
@@ -148,6 +150,103 @@ public class FormaV2 extends JFrame {
 				poljeRec.requestFocus();
 			}
 		});
+		
+		// TODO: променити у класи форма начин проналажења врсте речи и објединити у једну класу јер је веома слично
+		dodajRec.addActionListener((ae) -> {
+			String rec = poljeRec.getText().strip();
+			String znacenje = poljeZnacenje.getText().strip();
+			if(rec.isEmpty() || znacenje.isEmpty()) {
+				JOptionPane.showMessageDialog(
+		                null,
+		                "Унесите реч и значење!",
+		                "Грешка!",
+		                JOptionPane.ERROR_MESSAGE
+		        );
+				return;
+			}
+			if(grupa.getSelection() == null) {
+				JOptionPane.showMessageDialog(
+		                null,
+		                "Изаберите врсту речи!",
+		                "Грешка!",
+		                JOptionPane.ERROR_MESSAGE
+		        );
+				return;
+			}
+			int vrsta = Integer.parseInt(grupa.getSelection().getActionCommand());
+			
+			prefiksnoStablo.ubaci(rec, vrsta, znacenje);
+			azuriraj();
+		});
+		
+		pretraziRec.addActionListener((ae) -> {
+			String rec = poljeRec.getText().strip();
+			if(rec.isEmpty()) {
+				JOptionPane.showMessageDialog(
+		                null,
+		                "Унесите реч!",
+		                "Грешка!",
+		                JOptionPane.ERROR_MESSAGE
+		        );
+				return;
+			}
+			Element e = prefiksnoStablo.pretrazi(rec);
+			if(e == null) {
+				JOptionPane.showMessageDialog(
+		                null,
+		                "Реч не постоји у речнику!",
+		                "Грешка!",
+		                JOptionPane.ERROR_MESSAGE
+		        );
+				return;
+			}
+			poljeZnacenje.setText(e.znacenje);
+			postaviRadioDugmice(vrstaUTekst(e.vrsta));
+		});
+	}
+
+	private void postaviRadioDugmice(String vrsta) {
+		switch (vrsta) {
+			case "Именица": {
+				imenica.setSelected(true);
+				break;
+			}
+			case "Глагол": {
+				glagol.setSelected(true);
+				break;
+			}
+			case "Придев": {
+				pridev.setSelected(true);
+				break;
+			}
+			default: {
+				break;
+			}
+		}
+	}
+
+	private String vrstaUTekst(int v) {
+		String vrsta = "";
+		switch (v) {
+			case 0: {
+				vrsta = "Именица";
+				break;
+			}
+				
+			case 1: {
+				vrsta = "Глагол";
+				break;
+			}
+				
+			case 2: {
+				vrsta = "Придев";
+				break;
+			}
+			default: {
+				break;
+			}
+		}
+		return vrsta;
 	}
 
 	private void azuriraj() {

@@ -471,4 +471,8 @@ public class Forma extends JFrame {
             return this;
         }
     }
+	
+	public static void main(String[] args) {
+		new Forma();
+	}
 }
