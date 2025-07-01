@@ -175,8 +175,83 @@ public class FormaV2 extends JFrame {
 			}
 			int vrsta = Integer.parseInt(grupa.getSelection().getActionCommand());
 			
-			prefiksnoStablo.ubaci(rec, vrsta, znacenje);
+			boolean postoji = prefiksnoStablo.ubaci(rec, vrsta, znacenje);
+			if(postoji) {
+				JOptionPane.showMessageDialog(
+		                null,
+		                "Реч већ постоји у речнику!",
+		                "Грешка!",
+		                JOptionPane.ERROR_MESSAGE
+		        );
+				return;
+			}
+			
 			azuriraj();
+		});
+		
+		izmeniRec.addActionListener((ae) -> {
+			String rec = poljeRec.getText().strip();
+			String znacenje = poljeZnacenje.getText().strip();
+			if(rec.isEmpty() || znacenje.isEmpty()) {
+				JOptionPane.showMessageDialog(
+		                null,
+		                "Унесите реч и значење!",
+		                "Грешка!",
+		                JOptionPane.ERROR_MESSAGE
+		        );
+				return;
+			}
+			if(grupa.getSelection() == null) {
+				JOptionPane.showMessageDialog(
+		                null,
+		                "Изаберите врсту речи!",
+		                "Грешка!",
+		                JOptionPane.ERROR_MESSAGE
+		        );
+				return;
+			}
+			int vrsta = Integer.parseInt(grupa.getSelection().getActionCommand());
+			
+			boolean povratnaVrednost = prefiksnoStablo.izmeni(rec, vrsta, znacenje);
+			if(!povratnaVrednost) {
+				JOptionPane.showMessageDialog(
+		                null,
+		                "Реч не постоји у речнику!",
+		                "Грешка!",
+		                JOptionPane.ERROR_MESSAGE
+		        );
+				return;
+			}
+		});
+		
+		obrisiRec.addActionListener((ae) -> {
+			String rec = poljeRec.getText().strip();
+			if(rec.isEmpty()) {
+				JOptionPane.showMessageDialog(
+		                null,
+		                "Унесите реч!",
+		                "Грешка!",
+		                JOptionPane.ERROR_MESSAGE
+		        );
+				return;
+			}
+//			int indeks = recnik.obrisi(rec);
+//			if(indeks == -1) {
+//				JOptionPane.showMessageDialog(
+//		                null,
+//		                "Реч не постоји у речнику!",
+//		                "Грешка!",
+//		                JOptionPane.ERROR_MESSAGE
+//		        );
+//				return;
+//			}
+//			model.removeRow(indeks);
+//			if(tabela.getRowCount() > 0) {
+//				tabela.setRowSelectionInterval(Math.min(indeks, tabela.getRowCount() - 1), Math.min(indeks, tabela.getRowCount() - 1));
+//				poljeRec.setText((String) tabela.getValueAt(tabela.getSelectedRow(), 0));
+//				postaviRadioDugmice((String) tabela.getValueAt(tabela.getSelectedRow(), 1));
+//				poljeZnacenje.setText((String) tabela.getValueAt(tabela.getSelectedRow(), 2));
+//			}			
 		});
 		
 		pretraziRec.addActionListener((ae) -> {

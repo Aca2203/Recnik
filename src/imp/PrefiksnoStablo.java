@@ -12,18 +12,40 @@ public class PrefiksnoStablo {
 	
 	private Cvor koren = new Cvor();
 	
-	public void ubaci(String rec, int vrsta, String znacenje) {
+	public boolean ubaci(String rec, int vrsta, String znacenje) {
 		Cvor trenutni = koren;
+		boolean postoji = true;
 		for(char karakter: rec.toCharArray()) {
 			if(!trenutni.deca.containsKey(karakter)) {
+				postoji = false;
 				trenutni.deca.put(karakter, new Cvor());
 			}
 			trenutni = trenutni.deca.get(karakter);
 		}
 		
+		if(postoji) return true;
+		
 		trenutni.krajReci = true;
 		trenutni.vrsta = vrsta;
 		trenutni.znacenje = znacenje;
+		
+		return false;
+	}
+	
+	public boolean izmeni(String rec, int vrsta, String znacenje) {
+		Cvor trenutni = koren;
+		for(char karakter: rec.toCharArray()) {
+			if(!trenutni.deca.containsKey(karakter)) {
+				return false;
+			}
+			trenutni = trenutni.deca.get(karakter);
+		}
+		
+		if(!trenutni.krajReci) return false;
+		
+		trenutni.vrsta = vrsta;
+		trenutni.znacenje = znacenje;
+		return true;
 	}
 	
 	public Element pretrazi(String rec) {
