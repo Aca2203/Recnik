@@ -235,23 +235,19 @@ public class FormaV2 extends JFrame {
 		        );
 				return;
 			}
-//			int indeks = recnik.obrisi(rec);
-//			if(indeks == -1) {
-//				JOptionPane.showMessageDialog(
-//		                null,
-//		                "Реч не постоји у речнику!",
-//		                "Грешка!",
-//		                JOptionPane.ERROR_MESSAGE
-//		        );
-//				return;
-//			}
-//			model.removeRow(indeks);
-//			if(tabela.getRowCount() > 0) {
-//				tabela.setRowSelectionInterval(Math.min(indeks, tabela.getRowCount() - 1), Math.min(indeks, tabela.getRowCount() - 1));
-//				poljeRec.setText((String) tabela.getValueAt(tabela.getSelectedRow(), 0));
-//				postaviRadioDugmice((String) tabela.getValueAt(tabela.getSelectedRow(), 1));
-//				poljeZnacenje.setText((String) tabela.getValueAt(tabela.getSelectedRow(), 2));
-//			}			
+			boolean povratnaVrednost = prefiksnoStablo.obrisi(rec);
+			if(!povratnaVrednost) {
+				JOptionPane.showMessageDialog(
+		                null,
+		                "Реч не постоји у речнику!",
+		                "Грешка!",
+		                JOptionPane.ERROR_MESSAGE
+		        );
+				return;
+			}
+			poljeRec.setText("");
+			poljeZnacenje.setText("");
+			grupa.clearSelection();
 		});
 		
 		pretraziRec.addActionListener((ae) -> {

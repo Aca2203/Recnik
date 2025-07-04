@@ -95,4 +95,37 @@ public class PrefiksnoStablo {
 			dfs(rezultat, rec + karakter, trenutni.deca.get(karakter));
 		}
 	}
+
+	public boolean obrisi(String rec) {
+		boolean[] povratnaVrednost = {false};
+        dfsBrisanje(koren, rec, 0, povratnaVrednost);
+        return povratnaVrednost[0];
+    }
+
+    private boolean dfsBrisanje(Cvor cvor, String rec, int indeks, boolean[] povratnaVrednost) {
+        if (cvor == null) return false;
+
+        if (indeks == rec.length()) {
+            if (!cvor.krajReci) return false;
+            cvor.krajReci = false;
+            povratnaVrednost[0] = true;
+
+            return jelPrazan(cvor);
+        }
+
+        Cvor dete = cvor.deca.get(rec.charAt(indeks));
+        boolean daLiDaObriseDete = dfsBrisanje(dete, rec, indeks + 1, povratnaVrednost);
+
+        if (daLiDaObriseDete) {
+            cvor.deca.remove(rec.charAt(indeks));
+
+            return !cvor.krajReci && jelPrazan(cvor);
+        }
+
+        return false;
+    }
+
+    private boolean jelPrazan(Cvor cvor) {
+        return cvor.deca.size() == 0;
+    }
 }
