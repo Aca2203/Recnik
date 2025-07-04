@@ -35,7 +35,10 @@ public class Forma extends JFrame {
 	
 	private boolean programiranoAzuriranje = false;
 	
-	public Forma() {
+	private Biranje biranje;
+	
+	public Forma(Biranje biranje) {
+		this.biranje = biranje;
 		setSize(1000, 600);
 		setLocationRelativeTo(null);
 		setResizable(false);
@@ -327,6 +330,7 @@ public class Forma extends JFrame {
 			        );
 				}
 				dispose();
+				if(biranje != null) biranje.setVisible(true);
 			}
 		});
 		
@@ -473,6 +477,6 @@ public class Forma extends JFrame {
     }
 	
 	public static void main(String[] args) {
-		new Forma();
+		new Forma(null);
 	}
 }

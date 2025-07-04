@@ -31,13 +31,15 @@ public class FormaV2 extends JFrame {
 	private JButton obrisiRec = new JButton("Обриши реч");
 	private JButton pretraziRec = new JButton("Претражи реч");
 	
-	public FormaV2() {
+	private Biranje biranje;
+	
+	public FormaV2(Biranje biranje) {
+		this.biranje = biranje;
 		setSize(400, 300);
 		setLocationRelativeTo(null);
 		
 		setResizable(false);
 		setTitle("Речник");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		popuniProzor();
 		dodajOsluskivace();
@@ -274,6 +276,14 @@ public class FormaV2 extends JFrame {
 			poljeZnacenje.setText(e.znacenje);
 			postaviRadioDugmice(vrstaUTekst(e.vrsta));
 		});
+		
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				dispose();
+				if(biranje != null) biranje.setVisible(true);
+			}
+		});
 	}
 
 	private void postaviRadioDugmice(String vrsta) {
@@ -365,6 +375,6 @@ public class FormaV2 extends JFrame {
 	}
 	
 	public static void main(String[] args) {
-		new FormaV2();
+		new FormaV2(null);
 	}
 }
