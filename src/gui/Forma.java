@@ -12,10 +12,6 @@ import imp.*;
 
 @SuppressWarnings("serial")
 public class Forma extends JFrame {
-
-	private static final String PUTANJA = "recnik.txt";
-	private static final int VREME_CUVANJA = 20;
-	
 	Recnik recnik;
 	private JTable tabela;
 	private DefaultTableModel model;
@@ -25,7 +21,6 @@ public class Forma extends JFrame {
 	private JButton pretraziRec = new JButton("Претражи реч");
 	private JTextField poljeRec = new JTextField(20);
 	private JTextArea poljeZnacenje = new JTextArea(20, 5);
-	private JLabel recnikSacuvan = new JLabel();
 	private JMenuItem igricav1 = new JMenuItem("Понуђени одговори");
 	private JMenuItem igricav2 = new JMenuItem("Сам укуцај реч");
 	
@@ -83,7 +78,6 @@ public class Forma extends JFrame {
         tabela.getColumnModel().getColumn(2).setCellRenderer(new TextAreaRenderer());
         JScrollPane scrollPane = new JScrollPane(tabela);
         panel1.add(scrollPane);
-        panel1.add(recnikSacuvan, BorderLayout.SOUTH);
         
 		JPanel recZnacenje = new JPanel(new GridLayout(2, 2, 10, 0));
 		recZnacenje.add(new JLabel("Реч:", SwingConstants.RIGHT));		
@@ -371,7 +365,7 @@ public class Forma extends JFrame {
 	}
 
 	private void ucitajRecnik() throws IOException {		
-		recnik = new Recnik(PUTANJA, recnikSacuvan, VREME_CUVANJA);
+		recnik = new Recnik(Podesavanja.PUTANJA, Podesavanja.VREME_CUVANJA);
 	}
 	
 	private void popuniTabelu() {

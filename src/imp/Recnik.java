@@ -14,13 +14,11 @@ public class Recnik extends Thread {
 	private ArrayList<Element> niz = new ArrayList<>();
 	private int iterator = 0;
 	private boolean promenjen = false;
-	private JLabel labela;
 	private int vremeCuvanja;
 	private int sekunde = 0;
 	
-	public Recnik(String putanja, JLabel labela, int vremeCuvanja) throws IOException {
+	public Recnik(String putanja, int vremeCuvanja) throws IOException {
 		this.putanja = putanja;
-		this.labela = labela;
 		this.vremeCuvanja = vremeCuvanja;
 		List<String> linije = Files.readAllLines(Paths.get(putanja));
 		for(String linija: linije) {
@@ -44,12 +42,8 @@ public class Recnik extends Thread {
 				
 				if(sekunde == vremeCuvanja) {
 					sacuvaj();
-					labela.setText("Успешно сачувано!");
-					labela.revalidate();
 					sekunde = 0;
 					promenjen = false;
-					sleep(2000);
-					labela.setText("");
 				}
 			}
 		} catch (InterruptedException e) {}
