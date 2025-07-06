@@ -2,6 +2,7 @@ package gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -178,7 +179,7 @@ public class Forma extends JFrame {
 			}
 			int vrsta = dohvatiVrstuIzRadioDugmica();
 			
-			int indeks = recnik.ubaci(rec, vrsta, znacenje);
+			int indeks = recnik.ubaci(rec, vrsta, znacenje, true);
 			if(indeks == -1) {
 				JOptionPane.showMessageDialog(
 		                null,
@@ -369,10 +370,10 @@ public class Forma extends JFrame {
 	}
 	
 	private void popuniTabelu() {
-		for(recnik.pocetak(); !recnik.kraj(); recnik.sledeci()) {
-			Element el = recnik.dohvati();
-			String vrsta = vrstaUTekst(el.vrsta);
-			model.addRow(new Object[]{el.rec, vrsta, el.znacenje});
+		List<Element> reci = recnik.pretvoriUListu();
+		for(Element e: reci) {
+			String vrsta = vrstaUTekst(e.vrsta);
+			model.addRow(new Object[]{e.rec, vrsta, e.znacenje});
 		}
 	}	
 

@@ -2,8 +2,6 @@ package gui;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
-import java.nio.file.*;
 import java.util.List;
 
 import javax.swing.*;
@@ -14,9 +12,7 @@ import imp.PrefiksnoStablo;
 
 @SuppressWarnings("serial")
 public class FormaV2 extends JFrame {
-	private static final String PUTANJA = "recnik.txt";
-	
-	private PrefiksnoStablo prefiksnoStablo = new PrefiksnoStablo();
+	private PrefiksnoStablo prefiksnoStablo;
 	private JTextField poljeRec = new JTextField(20);
 	private JPopupMenu meni = new JPopupMenu();
 	private JTextArea poljeZnacenje = new JTextArea(5, 25);
@@ -176,7 +172,7 @@ public class FormaV2 extends JFrame {
 			}
 			int vrsta = Integer.parseInt(grupa.getSelection().getActionCommand());
 			
-			int postoji = prefiksnoStablo.ubaci(rec, vrsta, znacenje);
+			int postoji = prefiksnoStablo.ubaci(rec, vrsta, znacenje, true);
 			if(postoji == 1) {
 				JOptionPane.showMessageDialog(
 		                null,
@@ -262,7 +258,7 @@ public class FormaV2 extends JFrame {
 		        );
 				return;
 			}
-			Element e = prefiksnoStablo.pretrazi(rec);
+			Element e = prefiksnoStablo.pretrazi(rec, new int[0]);
 			if(e == null) {
 				JOptionPane.showMessageDialog(
 		                null,
@@ -279,6 +275,18 @@ public class FormaV2 extends JFrame {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
+				prefiksnoStablo.cuvar.interrupt();
+				try {
+					prefiksnoStablo.cuvar.sacuvaj();
+					prefiksnoStablo.cuvar.join();
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(
+			                null,
+			                "Грешка!",
+			                "Грешка!",
+			                JOptionPane.ERROR_MESSAGE
+			        );
+				}
 				dispose();
 				if(biranje != null) biranje.setVisible(true);
 			}
@@ -334,14 +342,14 @@ public class FormaV2 extends JFrame {
         meni.setVisible(false);
         meni.removeAll();
 
-        String[] reci = prefiksnoStablo.vratiReciSaPrefiksom(prefiks);
+        List<Element> elementi = prefiksnoStablo.vratiReciSaPrefiksom(prefiks);
         
-        if (reci == null) return;
+        if (elementi == null) return;
 
-        for (String rec : reci) {
-            JMenuItem item = new JMenuItem(rec);
+        for (Element el : elementi) {
+            JMenuItem item = new JMenuItem(el.rec);
             item.addActionListener(e -> {
-                poljeRec.setText(rec);
+                poljeRec.setText(el.rec);
                 meni.setVisible(false);
             });
             meni.add(item);
@@ -354,23 +362,8 @@ public class FormaV2 extends JFrame {
 	}
 
 	private void popuniRecnik() {
-		List<String> linije;
-		try {
-			linije = Files.readAllLines(Paths.get(PUTANJA));
-			for(String linija: linije) {
-				String[] recZnacenje = linija.split("#");
-				prefiksnoStablo.ubaci(recZnacenje[0], Integer.parseInt(recZnacenje[1]), recZnacenje[2]);
-			}
-			azuriraj();
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(
-	                null,
-	                "Фајл не постоји!",
-	                "Грешка!",
-	                JOptionPane.ERROR_MESSAGE
-	        );
-			System.exit(1);
-		}
+		prefiksnoStablo = new PrefiksnoStablo();
+		azuriraj();
 	}
 	
 	public static void main(String[] args) {

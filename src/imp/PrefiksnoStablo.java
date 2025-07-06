@@ -1,18 +1,23 @@
 package imp;
 
+import java.io.IOException;
 import java.util.*;
 
-public class PrefiksnoStablo {
+public class PrefiksnoStablo extends ImplementacijaRecnika {
 	private static class Cvor {
 		Map<Character, Cvor> deca = new TreeMap<>();
 		boolean krajReci = false;
-		int vrsta = -1;
-		String znacenje = null;
+		Element element = null;
 	}
 	
 	private Cvor koren = new Cvor();
 	
-	public int ubaci(String rec, int vrsta, String znacenje) {
+	public PrefiksnoStablo() {
+		this.cuvar = new AutomatskiCuvar(this, Podesavanja.PUTANJA, Podesavanja.VREME_CUVANJA);
+	}
+	
+	@Override
+	public synchronized int ubaci(String rec, int vrsta, String znacenje, boolean cuvanje) {
 		Cvor trenutni = koren;
 		boolean postoji = true;
 		for(char karakter: rec.toCharArray()) {
@@ -26,13 +31,15 @@ public class PrefiksnoStablo {
 		if(postoji) return 1;
 		
 		trenutni.krajReci = true;
-		trenutni.vrsta = vrsta;
-		trenutni.znacenje = znacenje;
+		trenutni.element = new Element(rec, vrsta, znacenje);
+		
+		if(cuvanje) zapocniTajmer();
 		
 		return 0;
 	}
 	
-	public int izmeni(String rec, int vrsta, String znacenje) {
+	@Override
+	public synchronized int izmeni(String rec, int vrsta, String znacenje) {
 		Cvor trenutni = koren;
 		for(char karakter: rec.toCharArray()) {
 			if(!trenutni.deca.containsKey(karakter)) {
@@ -43,66 +50,25 @@ public class PrefiksnoStablo {
 		
 		if(!trenutni.krajReci) return 0;
 		
-		trenutni.vrsta = vrsta;
-		trenutni.znacenje = znacenje;
+		trenutni.element.vrsta = vrsta;
+		trenutni.element.znacenje = znacenje;
+		
+		zapocniTajmer();
+		
 		return 1;
 	}
 	
-	public Element pretrazi(String rec) {
-		Cvor trenutni = koren;
-		
-		for(char karakter: rec.toCharArray()) {
-			if(!trenutni.deca.containsKey(karakter)) {
-				return null;
-			}
-			trenutni = trenutni.deca.get(karakter);
-		}
-		
-		return trenutni.krajReci ? new Element(rec, trenutni.vrsta, trenutni.znacenje) : null;
-	}
-	
-	public String[] vratiReciSaPrefiksom(String prefiks){
-		ArrayList<String> rezultat = new ArrayList<>();
-		
-		Cvor trenutni = koren;
-		if(prefiks == "") {
-			for(char karakter: trenutni.deca.keySet()) {
-				dfs(rezultat, "" + karakter, trenutni.deca.get(karakter));
-			}
-			return rezultat.toArray(new String[0]);
-		}
-				
-		for(char karakter: prefiks.toCharArray()) {
-			if(!trenutni.deca.containsKey(karakter)) {
-				return null;
-			}
-			trenutni = trenutni.deca.get(karakter);
-		}
-		
-		dfs(rezultat, prefiks, trenutni);
-		
-		
-		return rezultat.toArray(new String[0]);
-	}
-
-	private void dfs(ArrayList<String> rezultat, String rec, Cvor trenutni) {
-		if(trenutni.krajReci) {
-			rezultat.add(rec);
-			return;
-		}
-		
-		for(char karakter: trenutni.deca.keySet()) {
-			dfs(rezultat, rec + karakter, trenutni.deca.get(karakter));
-		}
-	}
-
-	public int obrisi(String rec) {
+	@Override
+	public synchronized int obrisi(String rec) {
 		int[] povratnaVrednost = {0};
         dfsBrisanje(koren, rec, 0, povratnaVrednost);
+        
+        zapocniTajmer();
+        
         return povratnaVrednost[0];
     }
-
-    private boolean dfsBrisanje(Cvor cvor, String rec, int indeks, int[] povratnaVrednost) {
+	
+	private boolean dfsBrisanje(Cvor cvor, String rec, int indeks, int[] povratnaVrednost) {
         if (cvor == null) return false;
 
         if (indeks == rec.length()) {
@@ -124,8 +90,69 @@ public class PrefiksnoStablo {
 
         return false;
     }
+	
+	@Override
+	public synchronized Element pretrazi(String rec, int[] indeks) {
+		Cvor trenutni = koren;
+		
+		for(char karakter: rec.toCharArray()) {
+			if(!trenutni.deca.containsKey(karakter)) {
+				return null;
+			}
+			trenutni = trenutni.deca.get(karakter);
+		}
+		
+		return trenutni.krajReci ? trenutni.element : null;
+	}
+	
+	public synchronized List<Element> vratiReciSaPrefiksom(String prefiks){
+		List<Element> rezultat = new ArrayList<>();
+		
+		Cvor trenutni = koren;
+		if(prefiks == "") {
+			for(char karakter: trenutni.deca.keySet()) {
+				dfs(rezultat, "" + karakter, trenutni.deca.get(karakter));
+			}
+			return rezultat;
+		}
+				
+		for(char karakter: prefiks.toCharArray()) {
+			if(!trenutni.deca.containsKey(karakter)) {
+				return null;
+			}
+			trenutni = trenutni.deca.get(karakter);
+		}
+		
+		dfs(rezultat, prefiks, trenutni);
+		
+		
+		return rezultat;
+	}
+
+	private void dfs(List<Element> rezultat, String rec, Cvor trenutni) {
+		if(trenutni.krajReci) {
+			rezultat.add(trenutni.element);
+			return;
+		}
+		
+		for(char karakter: trenutni.deca.keySet()) {
+			dfs(rezultat, rec + karakter, trenutni.deca.get(karakter));
+		}
+	}    
 
     private boolean jelPrazan(Cvor cvor) {
         return cvor.deca.size() == 0;
     }
+
+	@Override
+	synchronized void popuni(List<Element> reci) {
+		for(Element e: reci) {
+			ubaci(e.rec, e.vrsta, e.znacenje, false);
+		}
+	}
+
+	@Override
+	public synchronized List<Element> pretvoriUListu() throws IOException {
+		return vratiReciSaPrefiksom("");
+	}
 }

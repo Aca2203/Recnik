@@ -1,32 +1,14 @@
 package imp;
-import java.io.IOException;
+
 import java.util.*;
 
 public class Recnik extends ImplementacijaRecnika {
 	// SC: O(n)
 	private List<Element> niz;
-	private int iterator;
 	
 	public Recnik() {
 		this.niz = new ArrayList<>();
-		this.iterator = 0;
 		this.cuvar = new AutomatskiCuvar(this, Podesavanja.PUTANJA, Podesavanja.VREME_CUVANJA);
-	}
-	
-	public void pocetak() {
-		iterator = 0;
-	}
-	
-	public void sledeci() {
-		iterator++;
-	}
-	
-	public boolean kraj() {
-		return iterator == niz.size();
-	}
-	
-	public Element dohvati() {
-		return niz.get(iterator);
 	}
 	
 	public Element dohvati(int indeks) {
@@ -54,7 +36,7 @@ public class Recnik extends ImplementacijaRecnika {
 	// TC: O(n)
 	// SC: O(1)
 	@Override
-	public synchronized int ubaci(String rec, int vrsta, String znacenje) {
+	public synchronized int ubaci(String rec, int vrsta, String znacenje, boolean cuvanje) {
 		int levi = 0, desni = niz.size() - 1;
 		while(levi <= desni) {
 			int sredina = levi + (desni - levi) / 2;
@@ -106,12 +88,12 @@ public class Recnik extends ImplementacijaRecnika {
 	}
 
 	@Override
-	public List<Element> pretvoriUListu() throws IOException {
+	public synchronized List<Element> pretvoriUListu() {
 		return niz;
 	}
 
 	@Override
-	void popuni(List<Element> reci) {
+	synchronized void popuni(List<Element> reci) {
 		this.niz = reci;
 	}
 }

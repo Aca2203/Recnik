@@ -7,7 +7,7 @@ public abstract class ImplementacijaRecnika {
 	public AutomatskiCuvar cuvar;
 	
 	abstract void popuni(List<Element> reci);
-	abstract int ubaci(String rec, int vrsta, String znacenje);
+	abstract int ubaci(String rec, int vrsta, String znacenje, boolean cuvanje);
 	abstract int izmeni(String rec, int vrsta, String znacenje);
 	abstract int obrisi(String rec);
 	abstract Element pretrazi(String rec, int[] indeks);
