@@ -11,6 +11,7 @@ import javax.swing.table.*;
 
 import imp.*;
 
+// TODO: Додавање надкласе класама форма и форма верзија два јер имају заједничке ствари
 @SuppressWarnings("serial")
 public class Forma extends JFrame {
 	Recnik recnik;
@@ -161,107 +162,36 @@ public class Forma extends JFrame {
 		});
 		
 		dodajRec.addActionListener((ae) -> {
-			String rec = poljeRec.getText().strip();
-			String znacenje = poljeZnacenje.getText().strip();
-			if(rec.isEmpty() || znacenje.isEmpty()) {
-				JOptionPane.showMessageDialog(
-		                null,
-		                "Унесите реч и значење!",
-		                "Грешка!",
-		                JOptionPane.ERROR_MESSAGE
-		        );
-				return;
-			}
-			if(grupa.getSelection() == null) {
-				JOptionPane.showMessageDialog(
-		                null,
-		                "Изаберите врсту речи!",
-		                "Грешка!",
-		                JOptionPane.ERROR_MESSAGE
-		        );
-				return;
-			}
+			Element e = Alatke.proveraPoljaRecZnacenje(poljeRec, poljeZnacenje, grupa);
+			if(e == null) return;
 			
-			int vrsta = Integer.parseInt(grupa.getSelection().getActionCommand());
+			int indeks = recnik.ubaci(e.rec, e.vrsta, e.znacenje, true);
+			if(!Alatke.proveriIndeks(indeks, "Реч већ постоји у речнику!")) return;
 			
-			int indeks = recnik.ubaci(rec, vrsta, znacenje, true);
-			if(indeks == -1) {
-				JOptionPane.showMessageDialog(
-		                null,
-		                "Реч већ постоји у речнику!",
-		                "Грешка!",
-		                JOptionPane.ERROR_MESSAGE
-		        );
-				return;
-			}
-			String vrstaTekst = vrstaUTekst(vrsta);
-			model.insertRow(indeks, new Object[]{rec, vrstaTekst, znacenje});
+			String vrstaTekst = vrstaUTekst(e.vrsta);
+			model.insertRow(indeks, new Object[]{e.rec, vrstaTekst, e.znacenje});
 			tabela.setRowSelectionInterval(indeks, indeks);
 		});
 		
 		izmeniRec.addActionListener((ae) -> {
-			String rec = poljeRec.getText().strip();
-			String znacenje = poljeZnacenje.getText().strip();
-			if(rec.isEmpty() || znacenje.isEmpty()) {
-				JOptionPane.showMessageDialog(
-		                null,
-		                "Унесите реч и значење!",
-		                "Грешка!",
-		                JOptionPane.ERROR_MESSAGE
-		        );
-				return;
-			}
-			if(grupa.getSelection() == null) {
-				JOptionPane.showMessageDialog(
-		                null,
-		                "Изаберите врсту речи!",
-		                "Грешка!",
-		                JOptionPane.ERROR_MESSAGE
-		        );
-				return;
-			}
+			Element e = Alatke.proveraPoljaRecZnacenje(poljeRec, poljeZnacenje, grupa);
+			if(e == null) return;
 			
-			int vrsta = Integer.parseInt(grupa.getSelection().getActionCommand());
+			int indeks = recnik.izmeni(e.rec, e.vrsta, e.znacenje);
+			if(!Alatke.proveriIndeks(indeks, "Реч не постоји у речнику!")) return;
 			
-			int indeks = recnik.izmeni(rec, vrsta, znacenje);
-			if(indeks == -1) {
-				JOptionPane.showMessageDialog(
-		                null,
-		                "Реч не постоји у речнику!",
-		                "Грешка!",
-		                JOptionPane.ERROR_MESSAGE
-		        );
-				return;
-			}
-			
-			String vrstaTekst = vrstaUTekst(vrsta);
+			String vrstaTekst = vrstaUTekst(e.vrsta);
 			programiranoAzuriranje = true;
 			model.setValueAt(vrstaTekst, indeks, 1);
-			model.setValueAt(znacenje, indeks, 2);
+			model.setValueAt(e.znacenje, indeks, 2);
 			programiranoAzuriranje = false;
 		});
 		
 		obrisiRec.addActionListener((ae) -> {
-			String rec = poljeRec.getText().strip();
-			if(rec.isEmpty()) {
-				JOptionPane.showMessageDialog(
-		                null,
-		                "Унесите реч!",
-		                "Грешка!",
-		                JOptionPane.ERROR_MESSAGE
-		        );
-				return;
-			}
+			String rec = Alatke.proveraPoljeRec(poljeRec);
 			int indeks = recnik.obrisi(rec);
-			if(indeks == -1) {
-				JOptionPane.showMessageDialog(
-		                null,
-		                "Реч не постоји у речнику!",
-		                "Грешка!",
-		                JOptionPane.ERROR_MESSAGE
-		        );
-				return;
-			}
+			if(!Alatke.proveriIndeks(indeks, "Реч не постоји у речнику!")) return;
+			
 			model.removeRow(indeks);
 			if(tabela.getRowCount() > 0) {
 				tabela.setRowSelectionInterval(Math.min(indeks, tabela.getRowCount() - 1), Math.min(indeks, tabela.getRowCount() - 1));
@@ -272,27 +202,10 @@ public class Forma extends JFrame {
 		});
 		
 		pretraziRec.addActionListener((ae) -> {
-			String rec = poljeRec.getText().strip();
-			if(rec.isEmpty()) {
-				JOptionPane.showMessageDialog(
-		                null,
-		                "Унесите реч!",
-		                "Грешка!",
-		                JOptionPane.ERROR_MESSAGE
-		        );
-				return;
-			}
+			String rec = Alatke.proveraPoljeRec(poljeRec);
 			int[] indeks = new int[1];
 			Element e = recnik.pretrazi(rec, indeks);
-			if(e == null) {
-				JOptionPane.showMessageDialog(
-		                null,
-		                "Реч не постоји у речнику!",
-		                "Грешка!",
-		                JOptionPane.ERROR_MESSAGE
-		        );
-				return;
-			}
+			if(!Alatke.proveraPretrazivanje(e)) return;
 			poljeZnacenje.setText(e.znacenje);
 			postaviRadioDugmice(vrstaUTekst(e.vrsta));
 			tabela.setRowSelectionInterval(indeks[0], indeks[0]);

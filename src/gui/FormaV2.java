@@ -7,6 +7,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import imp.Alatke;
 import imp.Element;
 import imp.PrefiksnoStablo;
 
@@ -148,31 +149,11 @@ public class FormaV2 extends JFrame {
 			}
 		});
 		
-		// TODO: променити у класи форма начин проналажења врсте речи и објединити у једну класу јер је веома слично
 		dodajRec.addActionListener((ae) -> {
-			String rec = poljeRec.getText().strip();
-			String znacenje = poljeZnacenje.getText().strip();
-			if(rec.isEmpty() || znacenje.isEmpty()) {
-				JOptionPane.showMessageDialog(
-		                null,
-		                "Унесите реч и значење!",
-		                "Грешка!",
-		                JOptionPane.ERROR_MESSAGE
-		        );
-				return;
-			}
-			if(grupa.getSelection() == null) {
-				JOptionPane.showMessageDialog(
-		                null,
-		                "Изаберите врсту речи!",
-		                "Грешка!",
-		                JOptionPane.ERROR_MESSAGE
-		        );
-				return;
-			}
-			int vrsta = Integer.parseInt(grupa.getSelection().getActionCommand());
+			Element e = Alatke.proveraPoljaRecZnacenje(poljeRec, poljeZnacenje, grupa);
+			if(e == null) return;
 			
-			int postoji = prefiksnoStablo.ubaci(rec, vrsta, znacenje, true);
+			int postoji = prefiksnoStablo.ubaci(e.rec, e.vrsta, e.znacenje, true);
 			if(postoji == 1) {
 				JOptionPane.showMessageDialog(
 		                null,
@@ -187,87 +168,27 @@ public class FormaV2 extends JFrame {
 		});
 		
 		izmeniRec.addActionListener((ae) -> {
-			String rec = poljeRec.getText().strip();
-			String znacenje = poljeZnacenje.getText().strip();
-			if(rec.isEmpty() || znacenje.isEmpty()) {
-				JOptionPane.showMessageDialog(
-		                null,
-		                "Унесите реч и значење!",
-		                "Грешка!",
-		                JOptionPane.ERROR_MESSAGE
-		        );
-				return;
-			}
-			if(grupa.getSelection() == null) {
-				JOptionPane.showMessageDialog(
-		                null,
-		                "Изаберите врсту речи!",
-		                "Грешка!",
-		                JOptionPane.ERROR_MESSAGE
-		        );
-				return;
-			}
-			int vrsta = Integer.parseInt(grupa.getSelection().getActionCommand());
+			Element e = Alatke.proveraPoljaRecZnacenje(poljeRec, poljeZnacenje, grupa);
+			if(e == null) return;
 			
-			int povratnaVrednost = prefiksnoStablo.izmeni(rec, vrsta, znacenje);
-			if(povratnaVrednost == 0) {
-				JOptionPane.showMessageDialog(
-		                null,
-		                "Реч не постоји у речнику!",
-		                "Грешка!",
-		                JOptionPane.ERROR_MESSAGE
-		        );
-				return;
-			}
+			int povratnaVrednost = prefiksnoStablo.izmeni(e.rec, e.vrsta, e.znacenje);
+			Alatke.provera(povratnaVrednost);
 		});
 		
 		obrisiRec.addActionListener((ae) -> {
-			String rec = poljeRec.getText().strip();
-			if(rec.isEmpty()) {
-				JOptionPane.showMessageDialog(
-		                null,
-		                "Унесите реч!",
-		                "Грешка!",
-		                JOptionPane.ERROR_MESSAGE
-		        );
-				return;
-			}
+			String rec = Alatke.proveraPoljeRec(poljeRec);
 			int povratnaVrednost = prefiksnoStablo.obrisi(rec);
-			if(povratnaVrednost == 0) {
-				JOptionPane.showMessageDialog(
-		                null,
-		                "Реч не постоји у речнику!",
-		                "Грешка!",
-		                JOptionPane.ERROR_MESSAGE
-		        );
-				return;
-			}
+			if(!Alatke.provera(povratnaVrednost)) return;
+			
 			poljeRec.setText("");
 			poljeZnacenje.setText("");
 			grupa.clearSelection();
 		});
 		
 		pretraziRec.addActionListener((ae) -> {
-			String rec = poljeRec.getText().strip();
-			if(rec.isEmpty()) {
-				JOptionPane.showMessageDialog(
-		                null,
-		                "Унесите реч!",
-		                "Грешка!",
-		                JOptionPane.ERROR_MESSAGE
-		        );
-				return;
-			}
+			String rec = Alatke.proveraPoljeRec(poljeRec);
 			Element e = prefiksnoStablo.pretrazi(rec, new int[0]);
-			if(e == null) {
-				JOptionPane.showMessageDialog(
-		                null,
-		                "Реч не постоји у речнику!",
-		                "Грешка!",
-		                JOptionPane.ERROR_MESSAGE
-		        );
-				return;
-			}
+			if(!Alatke.proveraPretrazivanje(e)) return;
 			poljeZnacenje.setText(e.znacenje);
 			postaviRadioDugmice(vrstaUTekst(e.vrsta));
 		});
