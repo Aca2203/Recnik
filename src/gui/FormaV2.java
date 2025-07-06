@@ -177,8 +177,8 @@ public class FormaV2 extends JFrame {
 			}
 			int vrsta = Integer.parseInt(grupa.getSelection().getActionCommand());
 			
-			boolean postoji = prefiksnoStablo.ubaci(rec, vrsta, znacenje);
-			if(postoji) {
+			int postoji = prefiksnoStablo.ubaci(rec, vrsta, znacenje);
+			if(postoji == 1) {
 				JOptionPane.showMessageDialog(
 		                null,
 		                "Реч већ постоји у речнику!",
@@ -214,8 +214,8 @@ public class FormaV2 extends JFrame {
 			}
 			int vrsta = Integer.parseInt(grupa.getSelection().getActionCommand());
 			
-			boolean povratnaVrednost = prefiksnoStablo.izmeni(rec, vrsta, znacenje);
-			if(!povratnaVrednost) {
+			int povratnaVrednost = prefiksnoStablo.izmeni(rec, vrsta, znacenje);
+			if(povratnaVrednost == 0) {
 				JOptionPane.showMessageDialog(
 		                null,
 		                "Реч не постоји у речнику!",
@@ -237,8 +237,8 @@ public class FormaV2 extends JFrame {
 		        );
 				return;
 			}
-			boolean povratnaVrednost = prefiksnoStablo.obrisi(rec);
-			if(!povratnaVrednost) {
+			int povratnaVrednost = prefiksnoStablo.obrisi(rec);
+			if(povratnaVrednost == 0) {
 				JOptionPane.showMessageDialog(
 		                null,
 		                "Реч не постоји у речнику!",

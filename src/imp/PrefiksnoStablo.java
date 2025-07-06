@@ -12,7 +12,7 @@ public class PrefiksnoStablo {
 	
 	private Cvor koren = new Cvor();
 	
-	public boolean ubaci(String rec, int vrsta, String znacenje) {
+	public int ubaci(String rec, int vrsta, String znacenje) {
 		Cvor trenutni = koren;
 		boolean postoji = true;
 		for(char karakter: rec.toCharArray()) {
@@ -23,29 +23,29 @@ public class PrefiksnoStablo {
 			trenutni = trenutni.deca.get(karakter);
 		}
 		
-		if(postoji) return true;
+		if(postoji) return 1;
 		
 		trenutni.krajReci = true;
 		trenutni.vrsta = vrsta;
 		trenutni.znacenje = znacenje;
 		
-		return false;
+		return 0;
 	}
 	
-	public boolean izmeni(String rec, int vrsta, String znacenje) {
+	public int izmeni(String rec, int vrsta, String znacenje) {
 		Cvor trenutni = koren;
 		for(char karakter: rec.toCharArray()) {
 			if(!trenutni.deca.containsKey(karakter)) {
-				return false;
+				return 0;
 			}
 			trenutni = trenutni.deca.get(karakter);
 		}
 		
-		if(!trenutni.krajReci) return false;
+		if(!trenutni.krajReci) return 0;
 		
 		trenutni.vrsta = vrsta;
 		trenutni.znacenje = znacenje;
-		return true;
+		return 1;
 	}
 	
 	public Element pretrazi(String rec) {
@@ -96,19 +96,19 @@ public class PrefiksnoStablo {
 		}
 	}
 
-	public boolean obrisi(String rec) {
-		boolean[] povratnaVrednost = {false};
+	public int obrisi(String rec) {
+		int[] povratnaVrednost = {0};
         dfsBrisanje(koren, rec, 0, povratnaVrednost);
         return povratnaVrednost[0];
     }
 
-    private boolean dfsBrisanje(Cvor cvor, String rec, int indeks, boolean[] povratnaVrednost) {
+    private boolean dfsBrisanje(Cvor cvor, String rec, int indeks, int[] povratnaVrednost) {
         if (cvor == null) return false;
 
         if (indeks == rec.length()) {
             if (!cvor.krajReci) return false;
             cvor.krajReci = false;
-            povratnaVrednost[0] = true;
+            povratnaVrednost[0] = 1;
 
             return jelPrazan(cvor);
         }

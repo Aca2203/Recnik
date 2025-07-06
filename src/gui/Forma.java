@@ -311,18 +311,18 @@ public class Forma extends JFrame {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				recnik.interrupt();
-				try {
-					recnik.sacuvaj();
-					recnik.join();
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(
-			                null,
-			                "Грешка!",
-			                "Грешка!",
-			                JOptionPane.ERROR_MESSAGE
-			        );
-				}
+//				recnik.interrupt();
+//				try {
+//					recnik.sacuvaj();
+//					recnik.join();
+//				} catch (Exception e1) {
+//					JOptionPane.showMessageDialog(
+//			                null,
+//			                "Грешка!",
+//			                "Грешка!",
+//			                JOptionPane.ERROR_MESSAGE
+//			        );
+//				}
 				dispose();
 				if(biranje != null) biranje.setVisible(true);
 			}
@@ -365,7 +365,7 @@ public class Forma extends JFrame {
 	}
 
 	private void ucitajRecnik() throws IOException {		
-		recnik = new Recnik(Podesavanja.PUTANJA, Podesavanja.VREME_CUVANJA);
+		recnik = new Recnik();
 	}
 	
 	private void popuniTabelu() {

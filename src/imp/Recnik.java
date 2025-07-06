@@ -8,55 +8,15 @@ import java.util.*;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-public class Recnik extends Thread {
+public class Recnik {
 	// SC: O(n)
-	private String putanja;
 	private ArrayList<Element> niz = new ArrayList<>();
 	private int iterator = 0;
 	private boolean promenjen = false;
-	private int vremeCuvanja;
-	private int sekunde = 0;
 	
-	public Recnik(String putanja, int vremeCuvanja) throws IOException {
-		this.putanja = putanja;
-		this.vremeCuvanja = vremeCuvanja;
-		List<String> linije = Files.readAllLines(Paths.get(putanja));
-		for(String linija: linije) {
-			String[] recZnacenje = linija.split("#");
-			niz.add(new Element(recZnacenje[0], Integer.parseInt(recZnacenje[1]), recZnacenje[2]));			
-		}
-		this.start();
-	}
-	
-	@Override
-	public void run() {
-		try {
-			while(!isInterrupted()) {
-				synchronized (this) {
-					while(!promenjen) {
-						wait();
-					}
-				}
-				sleep(1000);
-				sekunde++;
-				
-				if(sekunde == vremeCuvanja) {
-					sacuvaj();
-					sekunde = 0;
-					promenjen = false;
-				}
-			}
-		} catch (InterruptedException e) {}
-		  catch (IOException e) {
-			  JOptionPane.showMessageDialog(
-	               	null,
-	                "Грешка при чувању речника у фајл!",
-	                "Грешка!",
-	                JOptionPane.ERROR_MESSAGE
-		       );
-			  System.exit(-1);
-		  }
-	}
+	public Recnik() throws IOException {
+		
+	}	
 	
 	public void pocetak() {
 		iterator = 0;
