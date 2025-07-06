@@ -15,7 +15,6 @@ import imp.PrefiksnoStablo;
 @SuppressWarnings("serial")
 public class FormaV2 extends JFrame {
 	private static final String PUTANJA = "recnik.txt";
-	private static final int VREME_CUVANJA = 20;
 	
 	private PrefiksnoStablo prefiksnoStablo = new PrefiksnoStablo();
 	private JTextField poljeRec = new JTextField(20);

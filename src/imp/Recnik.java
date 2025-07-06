@@ -1,22 +1,17 @@
 package imp;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-public class Recnik {
+public class Recnik extends ImplementacijaRecnika {
 	// SC: O(n)
-	private ArrayList<Element> niz = new ArrayList<>();
-	private int iterator = 0;
-	private boolean promenjen = false;
+	private List<Element> niz;
+	private int iterator;
 	
-	public Recnik() throws IOException {
-		
-	}	
+	public Recnik() {
+		this.niz = new ArrayList<>();
+		this.iterator = 0;
+		this.cuvar = new AutomatskiCuvar(this, Podesavanja.PUTANJA, Podesavanja.VREME_CUVANJA);
+	}
 	
 	public void pocetak() {
 		iterator = 0;
@@ -42,12 +37,6 @@ public class Recnik {
 		return niz.size();
 	}
 	
-	public synchronized void ispisi() {
-		for(Element e: niz) {
-			System.out.println(e.rec + " - " + e.znacenje);
-		}
-	}
-	
 	private int binarnaPretraga(String rec) {
 		int levi = 0, desni = niz.size() - 1;
 		while(levi <= desni) {
@@ -64,6 +53,7 @@ public class Recnik {
 	
 	// TC: O(n)
 	// SC: O(1)
+	@Override
 	public synchronized int ubaci(String rec, int vrsta, String znacenje) {
 		int levi = 0, desni = niz.size() - 1;
 		while(levi <= desni) {
@@ -76,21 +66,20 @@ public class Recnik {
 		}
 		
 		niz.add(levi, new Element(rec, vrsta, znacenje));
-		promenjen = true;
-		notify();
+		zapocniTajmer();
 		return levi;
 	}
 	
 	// TC: O(logn)
 	// SC: O(1)
+	@Override
 	public synchronized int izmeni(String rec, int vrsta, String znacenje) {
 		int indeks = binarnaPretraga(rec);
 		if(indeks != -1) {
 			Element e = niz.get(indeks);
 			if(vrsta != -1) e.vrsta = vrsta;
 			e.znacenje = znacenje;
-			promenjen = true;
-			notify();
+			zapocniTajmer();
 			return indeks;
 		}
 		else return -1;
@@ -98,30 +87,31 @@ public class Recnik {
 	
 	// TC: O(n)
 	// SC: O(1)
+	@Override
 	public synchronized int obrisi(String rec) {
 		int indeks = binarnaPretraga(rec);
 		if(indeks != -1) {
 			niz.remove(indeks);
-			promenjen = true;
-			notify();
+			zapocniTajmer();
 			return indeks;
 		}
 		else return -1;
 	}
 	
+	@Override
 	public synchronized Element pretrazi(String rec, int[] indeks) {
 		indeks[0] = binarnaPretraga(rec);
 		if(indeks[0] == -1) return null;
 		else return niz.get(indeks[0]);
 	}
-	
-	public synchronized void sacuvaj() throws IOException {
-		if(!promenjen) return;
-		Path p = Paths.get(putanja);
-		List<String> linije = new ArrayList<>();
-		for(Element e: niz) {
-			linije.add(e.rec + "#" + e.vrsta + "#" + e.znacenje);
-		}
-		Files.write(p, linije);
+
+	@Override
+	public List<Element> pretvoriUListu() throws IOException {
+		return niz;
+	}
+
+	@Override
+	void popuni(List<Element> reci) {
+		this.niz = reci;
 	}
 }

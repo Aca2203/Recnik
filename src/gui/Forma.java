@@ -311,18 +311,18 @@ public class Forma extends JFrame {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-//				recnik.interrupt();
-//				try {
-//					recnik.sacuvaj();
-//					recnik.join();
-//				} catch (Exception e1) {
-//					JOptionPane.showMessageDialog(
-//			                null,
-//			                "Грешка!",
-//			                "Грешка!",
-//			                JOptionPane.ERROR_MESSAGE
-//			        );
-//				}
+				recnik.cuvar.interrupt();
+				try {
+					recnik.cuvar.sacuvaj();
+					recnik.cuvar.join();
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(
+			                null,
+			                "Грешка!",
+			                "Грешка!",
+			                JOptionPane.ERROR_MESSAGE
+			        );
+				}
 				dispose();
 				if(biranje != null) biranje.setVisible(true);
 			}
