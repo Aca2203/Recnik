@@ -22,7 +22,7 @@ public class Biranje extends JFrame {
 		dodajOsluskivace();
 		
 		setVisible(true);
-	}	
+	}
 
 	private void popuniProzor() {
 		

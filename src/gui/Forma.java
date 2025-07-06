@@ -25,6 +25,7 @@ public class Forma extends JFrame {
 	private JMenuItem igricav1 = new JMenuItem("Понуђени одговори");
 	private JMenuItem igricav2 = new JMenuItem("Сам укуцај реч");
 	
+	private ButtonGroup grupa = new ButtonGroup();
 	private JRadioButton imenica = new JRadioButton("Именица");
 	private JRadioButton glagol = new JRadioButton("Глагол");
 	private JRadioButton pridev = new JRadioButton("Придев");
@@ -90,7 +91,10 @@ public class Forma extends JFrame {
 		
 		panel2.add(recZnacenje);
 		
-		ButtonGroup grupa = new ButtonGroup();
+		imenica.setActionCommand("0");
+		glagol.setActionCommand("1");
+		pridev.setActionCommand("2");
+		
 		grupa.add(imenica);
 		grupa.add(glagol);
 		grupa.add(pridev);
@@ -168,7 +172,7 @@ public class Forma extends JFrame {
 		        );
 				return;
 			}
-			if(!imenica.isSelected() && !glagol.isSelected() && !pridev.isSelected()) {
+			if(grupa.getSelection() == null) {
 				JOptionPane.showMessageDialog(
 		                null,
 		                "Изаберите врсту речи!",
@@ -177,7 +181,8 @@ public class Forma extends JFrame {
 		        );
 				return;
 			}
-			int vrsta = dohvatiVrstuIzRadioDugmica();
+			
+			int vrsta = Integer.parseInt(grupa.getSelection().getActionCommand());
 			
 			int indeks = recnik.ubaci(rec, vrsta, znacenje, true);
 			if(indeks == -1) {
@@ -206,7 +211,7 @@ public class Forma extends JFrame {
 		        );
 				return;
 			}
-			if(!imenica.isSelected() && !glagol.isSelected() && !pridev.isSelected()) {
+			if(grupa.getSelection() == null) {
 				JOptionPane.showMessageDialog(
 		                null,
 		                "Изаберите врсту речи!",
@@ -215,7 +220,8 @@ public class Forma extends JFrame {
 		        );
 				return;
 			}
-			int vrsta = dohvatiVrstuIzRadioDugmica();
+			
+			int vrsta = Integer.parseInt(grupa.getSelection().getActionCommand());
 			
 			int indeks = recnik.izmeni(rec, vrsta, znacenje);
 			if(indeks == -1) {
@@ -375,14 +381,6 @@ public class Forma extends JFrame {
 			String vrsta = vrstaUTekst(e.vrsta);
 			model.addRow(new Object[]{e.rec, vrsta, e.znacenje});
 		}
-	}	
-
-	private int dohvatiVrstuIzRadioDugmica() {
-		int vrsta = 0;
-		if(imenica.isSelected()) vrsta = 0;
-		if(glagol.isSelected()) vrsta = 1;
-		if(pridev.isSelected()) vrsta = 2;
-		return vrsta;
 	}
 	
 	private void postaviRadioDugmice(String vrsta) {
