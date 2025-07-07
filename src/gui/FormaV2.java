@@ -12,40 +12,22 @@ import imp.Element;
 import imp.PrefiksnoStablo;
 
 @SuppressWarnings("serial")
-public class FormaV2 extends JFrame {
+public class FormaV2 extends Forma {
 	private PrefiksnoStablo prefiksnoStablo;
-	private JTextField poljeRec = new JTextField(20);
+	
 	private JPopupMenu meni = new JPopupMenu();
-	private JTextArea poljeZnacenje = new JTextArea(5, 25);
-	private ButtonGroup grupa = new ButtonGroup();
-	private JRadioButton imenica = new JRadioButton("Именица");
-	private JRadioButton glagol = new JRadioButton("Глагол");
-	private JRadioButton pridev = new JRadioButton("Придев");
-	
-	private JButton dodajRec = new JButton("Додај реч");
-	private JButton izmeniRec = new JButton("Измени реч");
-	private JButton obrisiRec = new JButton("Обриши реч");
-	private JButton pretraziRec = new JButton("Претражи реч");
-	
-	private Biranje biranje;
-	
-	public FormaV2(Biranje biranje) {
-		this.biranje = biranje;
-		setSize(400, 300);
-		setLocationRelativeTo(null);
-		
-		setResizable(false);
-		setTitle("Речник");
-		
-		popuniProzor();
-		dodajOsluskivace();
-		popuniRecnik();		
-		
-		setVisible(true);
-	}
 
-	private void popuniProzor() {
+	public FormaV2(Biranje biranje) {
+		super(biranje);
+		this.inicializuj();
+	}
+	
+	@Override
+	protected void popuniProzor() {
+		setSize(400, 300);
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+		
+		poljeZnacenje = new JTextArea(5, 25);
 		
 		JPanel panel = new JPanel(new GridBagLayout());
 		panel.setMaximumSize(new Dimension(400, 200));
@@ -78,13 +60,7 @@ public class FormaV2 extends JFrame {
 		
 		this.add(panel);		
 		
-		imenica.setActionCommand("0");
-		glagol.setActionCommand("1");
-		pridev.setActionCommand("2");
-		
-		grupa.add(imenica);
-		grupa.add(glagol);
-		grupa.add(pridev);
+		postaviRadioDugmad();
 		
 		panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
 		panel.setMaximumSize(new Dimension(400, 50));
@@ -118,9 +94,10 @@ public class FormaV2 extends JFrame {
 		panel.add(pretraziRec, gbc);
 		
 		this.add(panel);
-	}
+	}	
 
-	private void dodajOsluskivace() {
+	@Override
+	protected void dodajOsluskivace() {
 		poljeRec.getDocument().addDocumentListener(new DocumentListener() {
 			
 			@Override
@@ -213,6 +190,12 @@ public class FormaV2 extends JFrame {
 			}
 		});
 	}
+	
+	@Override
+	protected void popuniRecnik() {
+		prefiksnoStablo = new PrefiksnoStablo();
+		azuriraj();
+	}
 
 	private void postaviRadioDugmice(String vrsta) {
 		switch (vrsta) {
@@ -280,12 +263,7 @@ public class FormaV2 extends JFrame {
             meni.show(poljeRec, 0, poljeRec.getBounds().height);
             poljeRec.requestFocus();
         } catch (Exception ex) {}
-	}
-
-	private void popuniRecnik() {
-		prefiksnoStablo = new PrefiksnoStablo();
-		azuriraj();
-	}
+	}	
 	
 	public static void main(String[] args) {
 		new FormaV2(null);

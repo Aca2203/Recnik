@@ -10,16 +10,16 @@ import imp.Recnik;
 
 @SuppressWarnings("serial")
 public class IgricaV2 extends JFrame {
-	private Forma roditelj;
+	private FormaV1 roditelj;
 	private Recnik recnik;
 	private JButton potvrdi = new JButton("Потврди одговор");
 	private JTextArea poljeZnacenje = new JTextArea(4, 20);
 	private JTextField poljeRec = new JTextField(20);
 	private String tacnaRec;
 	
-	public IgricaV2(Forma roditelj) {
+	public IgricaV2(FormaV1 roditelj) {
 		this.roditelj = roditelj;
-		this.recnik = roditelj.recnik;
+		this.recnik = roditelj.dohvatiRecnik();
 		
 		setSize(500, 300);
 		setLocationRelativeTo(null);

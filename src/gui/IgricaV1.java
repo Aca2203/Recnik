@@ -13,7 +13,7 @@ import imp.*;
 public class IgricaV1 extends JFrame {
 	private static final int brojOpcija = 4;
 	
-	private Forma roditelj;
+	private FormaV1 roditelj;
 	private Recnik recnik;
 	private JRadioButton[][] opcije = {
 		{ new JRadioButton(""), new JRadioButton(""), },
@@ -26,9 +26,9 @@ public class IgricaV1 extends JFrame {
 	
 	private String tacnaRec;
 	
-	public IgricaV1(Forma roditelj) {
+	public IgricaV1(FormaV1 roditelj) {
 		this.roditelj = roditelj;
-		this.recnik = roditelj.recnik;
+		this.recnik = roditelj.dohvatiRecnik();
 		
 		setSize(500, 300);
 		setLocationRelativeTo(null);

@@ -37,7 +37,7 @@ public class Biranje extends JFrame {
 	private void dodajOsluskivace() {
 		dugmeV1.addActionListener((ae) -> {
 			this.setVisible(false);
-			new Forma(this);
+			new FormaV1(this);
 		});
 		
 		dugmeV2.addActionListener((ae) -> {
