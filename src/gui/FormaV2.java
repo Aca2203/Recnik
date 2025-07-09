@@ -7,7 +7,6 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import imp.Alatke;
 import imp.Element;
 import imp.PrefiksnoStablo;
 
@@ -98,6 +97,7 @@ public class FormaV2 extends Forma {
 
 	@Override
 	protected void dodajOsluskivace() {
+		super.dodajOsluskivace();
 		poljeRec.getDocument().addDocumentListener(new DocumentListener() {
 			
 			@Override
@@ -124,50 +124,6 @@ public class FormaV2 extends Forma {
 				meni.show(poljeRec, 0, poljeRec.getBounds().height);
 				poljeRec.requestFocus();
 			}
-		});
-		
-		dodajRec.addActionListener((ae) -> {
-			Element e = Alatke.proveraPoljaRecZnacenje(poljeRec, poljeZnacenje, grupa);
-			if(e == null) return;
-			
-			int postoji = prefiksnoStablo.ubaci(e.rec, e.vrsta, e.znacenje, true);
-			if(postoji == 1) {
-				JOptionPane.showMessageDialog(
-		                null,
-		                "Реч већ постоји у речнику!",
-		                "Грешка!",
-		                JOptionPane.ERROR_MESSAGE
-		        );
-				return;
-			}
-			
-			azuriraj();
-		});
-		
-		izmeniRec.addActionListener((ae) -> {
-			Element e = Alatke.proveraPoljaRecZnacenje(poljeRec, poljeZnacenje, grupa);
-			if(e == null) return;
-			
-			int povratnaVrednost = prefiksnoStablo.izmeni(e.rec, e.vrsta, e.znacenje);
-			Alatke.provera(povratnaVrednost);
-		});
-		
-		obrisiRec.addActionListener((ae) -> {
-			String rec = Alatke.proveraPoljeRec(poljeRec);
-			int povratnaVrednost = prefiksnoStablo.obrisi(rec);
-			if(!Alatke.provera(povratnaVrednost)) return;
-			
-			poljeRec.setText("");
-			poljeZnacenje.setText("");
-			grupa.clearSelection();
-		});
-		
-		pretraziRec.addActionListener((ae) -> {
-			String rec = Alatke.proveraPoljeRec(poljeRec);
-			Element e = prefiksnoStablo.pretrazi(rec, new int[0]);
-			if(!Alatke.proveraPretrazivanje(e)) return;
-			poljeZnacenje.setText(e.znacenje);
-			postaviRadioDugmice(vrstaUTekst(e.vrsta));
 		});
 		
 		this.addWindowListener(new WindowAdapter() {
@@ -197,50 +153,6 @@ public class FormaV2 extends Forma {
 		azuriraj();
 	}
 
-	private void postaviRadioDugmice(String vrsta) {
-		switch (vrsta) {
-			case "Именица": {
-				imenica.setSelected(true);
-				break;
-			}
-			case "Глагол": {
-				glagol.setSelected(true);
-				break;
-			}
-			case "Придев": {
-				pridev.setSelected(true);
-				break;
-			}
-			default: {
-				break;
-			}
-		}
-	}
-
-	private String vrstaUTekst(int v) {
-		String vrsta = "";
-		switch (v) {
-			case 0: {
-				vrsta = "Именица";
-				break;
-			}
-				
-			case 1: {
-				vrsta = "Глагол";
-				break;
-			}
-				
-			case 2: {
-				vrsta = "Придев";
-				break;
-			}
-			default: {
-				break;
-			}
-		}
-		return vrsta;
-	}
-
 	private void azuriraj() {
 		String prefiks = poljeRec.getText().strip();
         meni.setVisible(false);
@@ -268,4 +180,44 @@ public class FormaV2 extends Forma {
 	public static void main(String[] args) {
 		new FormaV2(null);
 	}
+
+	@Override
+	protected void dodajElement(Element e) {
+		int postoji = prefiksnoStablo.ubaci(e.rec, e.vrsta, e.znacenje, true);
+		if(postoji == 1) {
+			JOptionPane.showMessageDialog(
+	                null,
+	                "Реч већ постоји у речнику!",
+	                "Грешка!",
+	                JOptionPane.ERROR_MESSAGE
+	        );
+			return;
+		}
+		
+		azuriraj();
+	}
+
+	@Override
+	protected void izmeniElement(Element e) {
+		int povratnaVrednost = prefiksnoStablo.izmeni(e.rec, e.vrsta, e.znacenje);
+		provera(povratnaVrednost);
+	}
+
+	@Override
+	protected void obrisiRec(String rec) {
+		int povratnaVrednost = prefiksnoStablo.obrisi(rec);
+		if(!provera(povratnaVrednost)) return;
+		
+		poljeRec.setText("");
+		poljeZnacenje.setText("");
+		grupa.clearSelection();
+	}
+
+	@Override
+	protected Element pretrazi(String rec, int[] indeks) {
+		return prefiksnoStablo.pretrazi(rec, indeks);
+	}
+
+	@Override
+	protected void oznaciUTabeli(int[] indeks) {}
 }

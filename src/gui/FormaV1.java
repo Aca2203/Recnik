@@ -131,6 +131,7 @@ public class FormaV1 extends Forma {
 
 	@Override
 	protected void dodajOsluskivace() {
+		super.dodajOsluskivace();
 		model.addTableModelListener(e -> {
 			if(programiranoAzuriranje) return;
 			
@@ -141,56 +142,6 @@ public class FormaV1 extends Forma {
 		        recnik.izmeni(rec, -1, znacenje);
 		        poljeZnacenje.setText(znacenje);
 		    }
-		});
-		
-		dodajRec.addActionListener((ae) -> {
-			Element e = Alatke.proveraPoljaRecZnacenje(poljeRec, poljeZnacenje, grupa);
-			if(e == null) return;
-			
-			int indeks = recnik.ubaci(e.rec, e.vrsta, e.znacenje, true);
-			if(!Alatke.proveriIndeks(indeks, "Реч већ постоји у речнику!")) return;
-			
-			String vrstaTekst = vrstaUTekst(e.vrsta);
-			model.insertRow(indeks, new Object[]{e.rec, vrstaTekst, e.znacenje});
-			tabela.setRowSelectionInterval(indeks, indeks);
-		});
-		
-		izmeniRec.addActionListener((ae) -> {
-			Element e = Alatke.proveraPoljaRecZnacenje(poljeRec, poljeZnacenje, grupa);
-			if(e == null) return;
-			
-			int indeks = recnik.izmeni(e.rec, e.vrsta, e.znacenje);
-			if(!Alatke.proveriIndeks(indeks, "Реч не постоји у речнику!")) return;
-			
-			String vrstaTekst = vrstaUTekst(e.vrsta);
-			programiranoAzuriranje = true;
-			model.setValueAt(vrstaTekst, indeks, 1);
-			model.setValueAt(e.znacenje, indeks, 2);
-			programiranoAzuriranje = false;
-		});
-		
-		obrisiRec.addActionListener((ae) -> {
-			String rec = Alatke.proveraPoljeRec(poljeRec);
-			int indeks = recnik.obrisi(rec);
-			if(!Alatke.proveriIndeks(indeks, "Реч не постоји у речнику!")) return;
-			
-			model.removeRow(indeks);
-			if(tabela.getRowCount() > 0) {
-				tabela.setRowSelectionInterval(Math.min(indeks, tabela.getRowCount() - 1), Math.min(indeks, tabela.getRowCount() - 1));
-				poljeRec.setText((String) tabela.getValueAt(tabela.getSelectedRow(), 0));
-				postaviRadioDugmice((String) tabela.getValueAt(tabela.getSelectedRow(), 1));
-				poljeZnacenje.setText((String) tabela.getValueAt(tabela.getSelectedRow(), 2));
-			}			
-		});
-		
-		pretraziRec.addActionListener((ae) -> {
-			String rec = Alatke.proveraPoljeRec(poljeRec);
-			int[] indeks = new int[1];
-			Element e = recnik.pretrazi(rec, indeks);
-			if(!Alatke.proveraPretrazivanje(e)) return;
-			poljeZnacenje.setText(e.znacenje);
-			postaviRadioDugmice(vrstaUTekst(e.vrsta));
-			tabela.setRowSelectionInterval(indeks[0], indeks[0]);
 		});
 		
 		tabela.addMouseListener(new MouseAdapter() {
@@ -323,10 +274,6 @@ public class FormaV1 extends Forma {
 		return vrsta;
 	}
 
-//	public static void main(String[] args) {
-//		new Forma();
-//	}
-
 	static class TextAreaRenderer extends JTextArea implements TableCellRenderer {		
 		private Border focusBorder = UIManager.getBorder("Table.focusCellHighlightBorder");
 		private Border noFocusBorder = BorderFactory.createEmptyBorder(
@@ -367,5 +314,51 @@ public class FormaV1 extends Forma {
 	
 	public static void main(String[] args) {
 		new FormaV1(null);
+	}
+
+	@Override
+	protected void dodajElement(Element e) {
+		int indeks = recnik.ubaci(e.rec, e.vrsta, e.znacenje, true);
+		if(!proveriIndeks(indeks, "Реч већ постоји у речнику!")) return;
+		
+		String vrstaTekst = vrstaUTekst(e.vrsta);
+		model.insertRow(indeks, new Object[]{e.rec, vrstaTekst, e.znacenje});
+		tabela.setRowSelectionInterval(indeks, indeks);
+	}
+
+	@Override
+	protected void izmeniElement(Element e) {
+		int indeks = recnik.izmeni(e.rec, e.vrsta, e.znacenje);
+		if(!proveriIndeks(indeks, "Реч не постоји у речнику!")) return;
+		
+		String vrstaTekst = vrstaUTekst(e.vrsta);
+		programiranoAzuriranje = true;
+		model.setValueAt(vrstaTekst, indeks, 1);
+		model.setValueAt(e.znacenje, indeks, 2);
+		programiranoAzuriranje = false;
+	}
+
+	@Override
+	protected void obrisiRec(String rec) {
+		int indeks = recnik.obrisi(rec);
+		if(!proveriIndeks(indeks, "Реч не постоји у речнику!")) return;
+		
+		model.removeRow(indeks);
+		if(tabela.getRowCount() > 0) {
+			tabela.setRowSelectionInterval(Math.min(indeks, tabela.getRowCount() - 1), Math.min(indeks, tabela.getRowCount() - 1));
+			poljeRec.setText((String) tabela.getValueAt(tabela.getSelectedRow(), 0));
+			postaviRadioDugmice((String) tabela.getValueAt(tabela.getSelectedRow(), 1));
+			poljeZnacenje.setText((String) tabela.getValueAt(tabela.getSelectedRow(), 2));
+		}	
+	}
+
+	@Override
+	protected Element pretrazi(String rec, int[] indeks) {
+		return recnik.pretrazi(rec, indeks);
+	}
+
+	@Override
+	protected void oznaciUTabeli(int[] indeks) {
+		tabela.setRowSelectionInterval(indeks[0], indeks[0]);
 	}
 }
