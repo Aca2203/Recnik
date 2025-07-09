@@ -1,7 +1,6 @@
 package gui;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,44 +9,23 @@ import javax.swing.*;
 import imp.*;
 
 @SuppressWarnings("serial")
-public class IgricaV1 extends JFrame {
+public class IgricaV1 extends Igrica {
 	private static final int brojOpcija = 4;
-	
-	private FormaV1 roditelj;
-	private Recnik recnik;
 	private JRadioButton[][] opcije = {
 		{ new JRadioButton(""), new JRadioButton(""), },
 		{ new JRadioButton(""), new JRadioButton("") }
 	};
 	private ButtonGroup grupa = new ButtonGroup();
-	private JButton potvrdi = new JButton("Потврди одговор");
-	
-	private JTextArea poljeZnacenje = new JTextArea(4, 20);
-	
-	private String tacnaRec;
 	
 	public IgricaV1(FormaV1 roditelj) {
-		this.roditelj = roditelj;
-		this.recnik = roditelj.dohvatiRecnik();
-		
-		setSize(500, 300);
-		setLocationRelativeTo(null);
-		setResizable(false);
-		setTitle("Игрица верзија 1");
-		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-		
-		popuniProzor();
-		dodajOsluskivace();
-		ucitajPitanje();
-		
-		setVisible(true);
+		super(roditelj);
+		this.inicijalizuj();
 	}	
 
-	private void popuniProzor() {		
-		poljeZnacenje.setEditable(false);
-		poljeZnacenje.setFocusable(false);
-		poljeZnacenje.setLineWrap(true);
-		poljeZnacenje.setWrapStyleWord(true);		
+	@Override
+	protected void popuniProzor() {
+		super.popuniProzor();
+		setTitle("Игрица верзија 1");	
         
 		JPanel panel = new JPanel(new GridBagLayout());		
 		
@@ -66,7 +44,6 @@ public class IgricaV1 extends JFrame {
 			}			
 		}
         
-		poljeZnacenje.setBorder(BorderFactory.createLineBorder(this.getBackground(), 10));
 		this.add(poljeZnacenje);
         this.add(panel);
         JPanel tmp = new JPanel();
@@ -74,14 +51,9 @@ public class IgricaV1 extends JFrame {
         this.add(tmp);
 	}
 	
-	private void dodajOsluskivace() {
-		this.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {				
-				dispose();
-				roditelj.setVisible(true);
-			}
-		});
+	@Override
+	protected void dodajOsluskivace() {
+		super.dodajOsluskivace();
 		
 		potvrdi.addActionListener((ae) -> {
 			String poruka;
@@ -108,7 +80,8 @@ public class IgricaV1 extends JFrame {
 		});
 	}
 
-	private void ucitajPitanje() {
+	@Override
+	protected void ucitajPitanje() {
 		int brojReci = recnik.dohvatiVelicinu();
 		if(brojReci < brojOpcija) return;
 		

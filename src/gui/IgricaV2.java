@@ -1,46 +1,25 @@
 package gui;
 
 import java.awt.*;
-import java.awt.event.*;
 
 import javax.swing.*;
 
 import imp.Element;
-import imp.Recnik;
 
 @SuppressWarnings("serial")
-public class IgricaV2 extends JFrame {
-	private FormaV1 roditelj;
-	private Recnik recnik;
-	private JButton potvrdi = new JButton("Потврди одговор");
-	private JTextArea poljeZnacenje = new JTextArea(4, 20);
+public class IgricaV2 extends Igrica {	
 	private JTextField poljeRec = new JTextField(20);
-	private String tacnaRec;
 	
 	public IgricaV2(FormaV1 roditelj) {
-		this.roditelj = roditelj;
-		this.recnik = roditelj.dohvatiRecnik();
-		
-		setSize(500, 300);
-		setLocationRelativeTo(null);
-		setResizable(false);
-		setTitle("Игрица верзија 2");
-		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-		
-		popuniProzor();
-		dodajOsluskivace();
-		ucitajPitanje();
-		
-		setVisible(true);
+		super(roditelj);
+		this.inicijalizuj();
 	}
 	
-	private void popuniProzor() {
-		poljeZnacenje.setEditable(false);
-		poljeZnacenje.setFocusable(false);
-		poljeZnacenje.setLineWrap(true);
-		poljeZnacenje.setWrapStyleWord(true);
+	@Override
+	protected void popuniProzor() {
+		super.popuniProzor();
+		setTitle("Игрица верзија 2");
         
-		poljeZnacenje.setBorder(BorderFactory.createLineBorder(this.getBackground(), 10));
 		this.add(poljeZnacenje);
 		
 		JPanel panel = new JPanel(new GridLayout(1, 2, 10, 0));
@@ -56,14 +35,9 @@ public class IgricaV2 extends JFrame {
         this.add(tmp);
 	}
 	
-	private void dodajOsluskivace() {
-		this.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {				
-				dispose();
-				roditelj.setVisible(true);
-			}
-		});
+	@Override
+	protected void dodajOsluskivace() {
+		super.dodajOsluskivace();
 		
 		potvrdi.addActionListener((ae) -> {
 			String izabranaRec = poljeRec.getText().strip();
@@ -84,7 +58,8 @@ public class IgricaV2 extends JFrame {
 		});
 	}
 
-	private void ucitajPitanje() {
+	@Override
+	protected void ucitajPitanje() {
 		int brojReci = recnik.dohvatiVelicinu();
 		
 		Element e = recnik.dohvati((int)(Math.random() * brojReci));

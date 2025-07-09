@@ -229,50 +229,6 @@ public class FormaV1 extends Forma {
 			model.addRow(new Object[]{e.rec, vrsta, e.znacenje});
 		}
 	}
-	
-	private void postaviRadioDugmice(String vrsta) {
-		switch (vrsta) {
-			case "Именица": {
-				imenica.setSelected(true);
-				break;
-			}
-			case "Глагол": {
-				glagol.setSelected(true);
-				break;
-			}
-			case "Придев": {
-				pridev.setSelected(true);
-				break;
-			}
-			default: {
-				break;
-			}
-		}
-	}
-	
-	private String vrstaUTekst(int v) {
-		String vrsta = "";
-		switch (v) {
-			case 0: {
-				vrsta = "Именица";
-				break;
-			}
-				
-			case 1: {
-				vrsta = "Глагол";
-				break;
-			}
-				
-			case 2: {
-				vrsta = "Придев";
-				break;
-			}
-			default: {
-				break;
-			}
-		}
-		return vrsta;
-	}
 
 	static class TextAreaRenderer extends JTextArea implements TableCellRenderer {		
 		private Border focusBorder = UIManager.getBorder("Table.focusCellHighlightBorder");

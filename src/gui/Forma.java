@@ -182,7 +182,7 @@ public abstract class Forma extends JFrame {
 		return true;
 	}
 	
-	private String vrstaUTekst(int v) {
+	protected String vrstaUTekst(int v) {
 		String vrsta = "";
 		switch (v) {
 			case 0: {
@@ -206,7 +206,7 @@ public abstract class Forma extends JFrame {
 		return vrsta;
 	}
 	
-	private void postaviRadioDugmice(String vrsta) {
+	protected void postaviRadioDugmice(String vrsta) {
 		switch (vrsta) {
 			case "Именица": {
 				imenica.setSelected(true);

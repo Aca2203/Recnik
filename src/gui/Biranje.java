@@ -25,7 +25,6 @@ public class Biranje extends JFrame {
 	}
 
 	private void popuniProzor() {
-		
 		JPanel content = new JPanel(new GridLayout(1, 2, 10, 0));
 		content.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		content.add(dugmeV1);
